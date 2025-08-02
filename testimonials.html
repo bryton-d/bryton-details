@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testimonials | Bryton's Auto Detailing</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .testimonials-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2em;
+      margin: 2em auto;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 2em;
+    }
+    .testimonial-text {
+      flex: 1 1 300px;
+      font-size: 1.1em;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .testimonial-image {
+      flex: 1 1 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .testimonial-image img {
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    @media (max-width: 700px) {
+      .testimonials-container {
+        flex-direction: column;
+        padding: 1em;
+      }
+      .testimonial-image, .testimonial-text {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header style="text-align: center; margin-bottom: 1em;">
+    <div style="font-size: 2em; font-style: italic; font-weight: bold;">Bryton's Auto Detailing</div>
+    <div style="font-size: 1.1em; margin: 0.5em 0 0.7em 0;">Customer Testimonials</div>
+    <a href="index.html" style="font-size: 1em; text-decoration: underline;">← Back to Home</a>
+  </header>
+
+  <main>
+    <div class="testimonials-container">
+      <div class="testimonial-text">
+        <p>"Bryton did an amazing job on my car! It looks brand new inside and out. Highly recommend his services to anyone in the area."</p>
+        <p style="font-weight: bold; margin-top: 1em;">– Sarah T., Media, PA</p>
+      </div>
+      <div class="testimonial-image">
+        <img src="images/exterior.png" alt="Detailed Car in Media, PA" />
+      </div>
+    </div>
+    <!-- Add more testimonials below as needed -->
+  </main>
+
+  <footer style="text-align: center; margin-top: 2em;">
+    <p>Contact: 484-942-8485 | bryton.d.henry@gmail.com</p>
+  </footer>
+</body>
+</html>
