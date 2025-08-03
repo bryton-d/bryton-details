@@ -35,29 +35,90 @@
       <label for="email">Email:</label>
       <input id="email" name="email" type="email" required />
 
-      <table style="border-collapse:separate; border-spacing:0 0.5em; width:100%; max-width:400px; margin:auto; margin-bottom:1em;">
+    <table style="border-collapse:separate; border-spacing:0 0.5em; width:100%; max-width:400px; margin:auto; margin-bottom:1em;">
         <caption style="caption-side:top; font-weight:bold; font-size:1.1em; margin-bottom:0.5em;">Service Estimator</caption>
         <tr>
-          <td style="width:2em; text-align:center;"><input type="checkbox" id="sedan-check" onchange="updateEstimator()" /></td>
-          <td><label for="sedan-check">Sedan</label></td>
-          <td style="width:7em; text-align:right;">$100 each</td>
-          <td style="width:4em; text-align:center;"><input type="number" id="sedan-qty" min="1" value="1" style="width:3em; display:none;" onchange="updateEstimator()" /></td>
+            <td style="width:2em; text-align:left;">
+                <input type="checkbox" id="sedan-check" onchange="updateEstimator()" />
+            </td>
+            <td>
+                <label for="sedan-check">Sedan</label>
+            </td>
+            <td style="width:10em; text-align:center;"></td>
+                <input type="number" id="sedan-qty" min="1" value="1" style="width:4em; background:#eee;" onchange="updateEstimator()" placeholder="Qty" disabled />
+            </td>
         </tr>
         <tr>
-          <td style="width:2em; text-align:center;"><input type="checkbox" id="smallsuv-check" onchange="updateEstimator()" /></td>
-          <td><label for="smallsuv-check">Small SUV</label></td>
-          <td style="width:7em; text-align:right;">$150 each</td>
-          <td style="width:4em; text-align:center;"><input type="number" id="smallsuv-qty" min="1" value="1" style="width:3em; display:none;" onchange="updateEstimator()" /></td>
+            <td style="width:2em; text-align:left;">
+                <input type="checkbox" id="smallsuv-check" onchange="updateEstimator()" />
+            </td>
+            <td>
+                <label for="smallsuv-check">Small SUV</label>
+            </td>
+            <td style="width:10em; text-align:center;">
+                <input type="number" id="smallsuv-qty" min="1" value="1" style="width:4em; background:#eee;" onchange="updateEstimator()" placeholder="Qty" disabled />
+            </td>
         </tr>
         <tr>
-          <td style="width:2em; text-align:center;"><input type="checkbox" id="large-check" onchange="updateEstimator()" /></td>
-          <td><label for="large-check">Large SUV / Van / Truck</label></td>
-          <td style="width:7em; text-align:right;">$200 each</td>
-          <td style="width:4em; text-align:center;"><input type="number" id="large-qty" min="1" value="1" style="width:3em; display:none;" onchange="updateEstimator()" /></td>
+            <td style="width:2em; text-align:left;">
+                <input type="checkbox" id="large-check" onchange="updateEstimator()" />
+            </td>
+            <td>
+                <label for="large-check">Large SUV / Van / Truck</label>
+            </td>
+            <td style="width:10em; text-align:center;">
+                <input type="number" id="large-qty" min="1" value="1" style="width:4em; background:#eee;" onchange="updateEstimator()" placeholder="Qty" disabled />
+            </td>
         </tr>
-      </table>
-      <div id="estimate-result" style="font-weight:bold; font-size:1.2em; text-align:center; margin-bottom:1em;"></div>
-      <input type="hidden" name="estimate" id="estimate-hidden" value="" />
+    </table>
+    <div style="text-align:center; font-size:0.95em; color:#555; margin-bottom:1em;">
+        Sedan: $100 each &nbsp; | &nbsp; Small SUV: $150 each &nbsp; | &nbsp; Large SUV/Van/Truck: $200 each
+    </div>
+    <script>
+    function updateEstimator() {
+        // Sedan
+        const sedanCheck = document.getElementById('sedan-check');
+        const sedanQty = document.getElementById('sedan-qty');
+        sedanQty.disabled = !sedanCheck.checked;
+        sedanQty.style.background = sedanCheck.checked ? "#fff" : "#eee";
+        // Small SUV
+        const smallsuvCheck = document.getElementById('smallsuv-check');
+        const smallsuvQty = document.getElementById('smallsuv-qty');
+        smallsuvQty.disabled = !smallsuvCheck.checked;
+        smallsuvQty.style.background = smallsuvCheck.checked ? "#fff" : "#eee";
+        // Large
+        const largeCheck = document.getElementById('large-check');
+        const largeQty = document.getElementById('large-qty');
+        largeQty.disabled = !largeCheck.checked;
+        largeQty.style.background = largeCheck.checked ? "#fff" : "#eee";
+
+        // Calculate total
+        let total = 0;
+        let summary = [];
+        if(sedanCheck.checked) {
+            let qty = parseInt(sedanQty.value) || 0;
+            total += qty * 100;
+            summary.push(`${qty} Sedan(s)`);
+        }
+        if(smallsuvCheck.checked) {
+            let qty = parseInt(smallsuvQty.value) || 0;
+            total += qty * 150;
+            summary.push(`${qty} Small SUV(s)`);
+        }
+        if(largeCheck.checked) {
+            let qty = parseInt(largeQty.value) || 0;
+            total += qty * 200;
+            summary.push(`${qty} Large SUV/Van/Truck(s)`);
+        }
+        let resultText = total > 0 ? `Estimated Total: $${total}` : '';
+        document.getElementById('estimate-result').textContent = resultText;
+        document.getElementById('estimate-hidden').value = summary.length > 0 ? `${summary.join(', ')} | Estimate: $${total}` : '';
+    }
+    // Initialize listeners on page load
+    window.addEventListener('DOMContentLoaded', function() {
+        updateEstimator();
+    });
+    </script>
 
       <label for="message">Additional Info:</label>
       <textarea name="message" id="message"></textarea>
