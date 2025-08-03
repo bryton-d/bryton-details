@@ -1,3 +1,22 @@
+/* Visually pop the estimate box */
+#estimate-box {
+  margin: 1em 0;
+  padding: 1.2em 1.5em;
+  background: #fff;
+  border-radius: 12px;
+  border: 2px solid #0077b6;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  color: #222;
+  font-size: 1.25em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.5px;
+  transition: box-shadow 0.2s;
+  max-width: 350px;
+}
+#estimate-box:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+}
 body {
   font-family: sans-serif;
   margin: 0;
