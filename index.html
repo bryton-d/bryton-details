@@ -8,45 +8,56 @@
 </head>
 <body>
 
-  <header>
-    <div class="site-title">Bryton's Auto Detailing</div>
-    <div class="site-subtitle">Home</div>
-    <nav>
-      <a href="index.html" class="active" aria-current="page">Home</a>
-      <a href="about.html">About</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="ig-posts.html">IG Posts</a>
-      <a href="https://www.instagram.com/p/DKt7DZ0uXGh/" target="_blank" rel="noopener" title="Instagram">
+  <header style="text-align: center; margin-bottom: 1em;">
+    <div style="font-size: 2em; font-style: italic; font-weight: bold;">Bryton's Auto Detailing</div>
+    <div style="font-size: 1.1em; margin: 0.5em 0 0.7em 0;"> Home </div>
+    <nav style="margin: 0.7em 0 0.5em 0; display: flex; justify-content: center; gap: 1.5em; align-items: center;">
+      <a href="index.html" style="color: #1877f2; text-decoration: none; font-weight: 500; font-size: 1.05em; padding: 0.2em 0.7em; border-radius: 5px; transition: background 0.2s;">Home</a>
+      <a href="about.html" style="color: #1877f2; text-decoration: none; font-weight: 500; font-size: 1.05em; padding: 0.2em 0.7em; border-radius: 5px; transition: background 0.2s;">About</a>
+      <a href="testimonials.html" style="color: #1877f2; text-decoration: none; font-weight: 500; font-size: 1.05em; padding: 0.2em 0.7em; border-radius: 5px; transition: background 0.2s;">Testimonials</a>
+      <a href="ig-posts.html" style="color: #1877f2; text-decoration: none; font-weight: 500; font-size: 1.05em; padding: 0.2em 0.7em; border-radius: 5px; transition: background 0.2s;">IG Posts</a>
+      <a href="https://www.instagram.com/p/DKt7DZ0uXGh/" target="_blank" rel="noopener" title="Instagram" style="display: inline-block;">
         <img src="images/instagram.svg" alt="Instagram" style="height: 2em; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); vertical-align: middle;" />
       </a>
     </nav>
   </header>
 
   <section>
-    <h2>Services & Pricing</h2>
-    <ul>
-      <li>Sedans – $100</li>
-      <li>Small SUVs – $150</li>
-      <li>Large SUVs / Vans / Trucks – $200</li>
-    </ul>
-  </section>
-
-  <section>
     <h2>Book Your Appointment</h2>
     <form id="intake-form" method="POST" action="https://formspree.io/f/xvgqbqzl">
       <input type="hidden" name="_redirect" value="https://lumego4.github.io/bryton-details.github.io/thank-you.html">
+      <div id="estimate-result" style="font-weight:bold; font-size:1.2em; text-align:center; margin-bottom:1em;"></div>
+      <input type="hidden" name="estimate" id="estimate-hidden" value="" />
+
       <label for="name">Name:</label>
       <input id="name" name="name" required />
 
       <label for="email">Email:</label>
       <input id="email" name="email" type="email" required />
 
-      <label for="service">Service Type:</label>
-      <select name="service" id="service">
-        <option>Sedan</option>
-        <option>Small SUV</option>
-        <option>Large SUV/Truck</option>
-      </select>
+      <table style="border-collapse:separate; border-spacing:0 0.5em; width:100%; max-width:400px; margin:auto; margin-bottom:1em;">
+        <caption style="caption-side:top; font-weight:bold; font-size:1.1em; margin-bottom:0.5em;">Service Estimator</caption>
+        <tr>
+          <td style="width:2em; text-align:center;"><input type="checkbox" id="sedan-check" onchange="updateEstimator()" /></td>
+          <td><label for="sedan-check">Sedan</label></td>
+          <td style="width:7em; text-align:right;">$100 each</td>
+          <td style="width:4em; text-align:center;"><input type="number" id="sedan-qty" min="1" value="1" style="width:3em; display:none;" onchange="updateEstimator()" /></td>
+        </tr>
+        <tr>
+          <td style="width:2em; text-align:center;"><input type="checkbox" id="smallsuv-check" onchange="updateEstimator()" /></td>
+          <td><label for="smallsuv-check">Small SUV</label></td>
+          <td style="width:7em; text-align:right;">$150 each</td>
+          <td style="width:4em; text-align:center;"><input type="number" id="smallsuv-qty" min="1" value="1" style="width:3em; display:none;" onchange="updateEstimator()" /></td>
+        </tr>
+        <tr>
+          <td style="width:2em; text-align:center;"><input type="checkbox" id="large-check" onchange="updateEstimator()" /></td>
+          <td><label for="large-check">Large SUV / Van / Truck</label></td>
+          <td style="width:7em; text-align:right;">$200 each</td>
+          <td style="width:4em; text-align:center;"><input type="number" id="large-qty" min="1" value="1" style="width:3em; display:none;" onchange="updateEstimator()" /></td>
+        </tr>
+      </table>
+      <div id="estimate-result" style="font-weight:bold; font-size:1.2em; text-align:center; margin-bottom:1em;"></div>
+      <input type="hidden" name="estimate" id="estimate-hidden" value="" />
 
       <label for="message">Additional Info:</label>
       <textarea name="message" id="message"></textarea>
@@ -60,6 +71,43 @@
     <p>Contact: 484-942-8485 | bryton.d.henry@gmail.com</p>
   </footer>
 
+  <script>
+    function updateEstimator() {
+      // Show/hide qty inputs
+      const sedanChecked = document.getElementById('sedan-check').checked;
+      document.getElementById('sedan-qty').style.display = sedanChecked ? 'inline-block' : 'none';
+      const smallsuvChecked = document.getElementById('smallsuv-check').checked;
+      document.getElementById('smallsuv-qty').style.display = smallsuvChecked ? 'inline-block' : 'none';
+      const largeChecked = document.getElementById('large-check').checked;
+      document.getElementById('large-qty').style.display = largeChecked ? 'inline-block' : 'none';
+
+      // Calculate total
+      let total = 0;
+      let summary = [];
+      if(sedanChecked) {
+        let qty = parseInt(document.getElementById('sedan-qty').value) || 0;
+        total += qty * 100;
+        summary.push(`${qty} Sedan(s)`);
+      }
+      if(smallsuvChecked) {
+        let qty = parseInt(document.getElementById('smallsuv-qty').value) || 0;
+        total += qty * 150;
+        summary.push(`${qty} Small SUV(s)`);
+      }
+      if(largeChecked) {
+        let qty = parseInt(document.getElementById('large-qty').value) || 0;
+        total += qty * 200;
+        summary.push(`${qty} Large SUV/Van/Truck(s)`);
+      }
+      let resultText = total > 0 ? `Estimated Total: $${total}` : '';
+      document.getElementById('estimate-result').textContent = resultText;
+      document.getElementById('estimate-hidden').value = summary.length > 0 ? `${summary.join(', ')} | Estimate: $${total}` : '';
+    }
+    // Initialize listeners on page load
+    window.addEventListener('DOMContentLoaded', function() {
+      updateEstimator();
+    });
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
