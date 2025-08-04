@@ -24,107 +24,66 @@
 
   <section>
     <h2>Book Your Appointment</h2>
-    <form id="intake-form" method="POST" action="https://formspree.io/f/xvgqbqzl">
-      <input type="hidden" name="_redirect" value="https://lumego4.github.io/bryton-details.github.io/thank-you.html">
-      <div id="estimate-result" style="font-weight:bold; font-size:1.2em; text-align:center; margin-bottom:1em;"></div>
-      <input type="hidden" name="estimate" id="estimate-hidden" value="" />
+ <form id="intake-form" method="POST" action="https://formspree.io/f/xvgqbqzl">
+  <input type="hidden" name="_redirect" value="https://lumego4.github.io/bryton-details.github.io/thank-you.html">
 
-      <label for="name">Name:</label>
-      <input id="name" name="name" required />
+  <label for="name">Name:</label>
+  <input id="name" name="name" required />
 
-      <label for="email">Email:</label>
-      <input id="email" name="email" type="email" required />
+  <label for="email">Email:</label>
+  <input id="email" name="email" type="email" required />
 
-    <table style="border-collapse:separate; border-spacing:0 0.5em; width:100%; max-width:400px; margin:auto; margin-bottom:1em;">
-        <caption style="caption-side:top; font-weight:bold; font-size:1.1em; margin-bottom:0.5em;">Service Estimator</caption>
-        <tr>
-            <td style="width:2em; text-align:left;">
-                <input type="checkbox" id="sedan-check" onchange="updateEstimator()" />
-            </td>
-            <td>
-                <label for="sedan-check">Sedan</label>
-            </td>
-            <td style="width:10em; text-align:center;"></td>
-                <input type="number" id="sedan-qty" min="1" value="1" style="width:4em; background:#eee;" onchange="updateEstimator()" placeholder="Qty" disabled />
-            </td>
-        </tr>
-        <tr>
-            <td style="width:2em; text-align:left;">
-                <input type="checkbox" id="smallsuv-check" onchange="updateEstimator()" />
-            </td>
-            <td>
-                <label for="smallsuv-check">Small SUV</label>
-            </td>
-            <td style="width:10em; text-align:center;">
-                <input type="number" id="smallsuv-qty" min="1" value="1" style="width:4em; background:#eee;" onchange="updateEstimator()" placeholder="Qty" disabled />
-            </td>
-        </tr>
-        <tr>
-            <td style="width:2em; text-align:left;">
-                <input type="checkbox" id="large-check" onchange="updateEstimator()" />
-            </td>
-            <td>
-                <label for="large-check">Large SUV / Van / Truck</label>
-            </td>
-            <td style="width:10em; text-align:center;">
-                <input type="number" id="large-qty" min="1" value="1" style="width:4em; background:#eee;" onchange="updateEstimator()" placeholder="Qty" disabled />
-            </td>
-        </tr>
-    </table>
-    <div style="text-align:center; font-size:0.95em; color:#555; margin-bottom:1em;">
-        Sedan: $100 each &nbsp; | &nbsp; Small SUV: $150 each &nbsp; | &nbsp; Large SUV/Van/Truck: $200 each
-    </div>
-    <script>
-    function updateEstimator() {
-        // Sedan
-        const sedanCheck = document.getElementById('sedan-check');
-        const sedanQty = document.getElementById('sedan-qty');
-        sedanQty.disabled = !sedanCheck.checked;
-        sedanQty.style.background = sedanCheck.checked ? "#fff" : "#eee";
-        // Small SUV
-        const smallsuvCheck = document.getElementById('smallsuv-check');
-        const smallsuvQty = document.getElementById('smallsuv-qty');
-        smallsuvQty.disabled = !smallsuvCheck.checked;
-        smallsuvQty.style.background = smallsuvCheck.checked ? "#fff" : "#eee";
-        // Large
-        const largeCheck = document.getElementById('large-check');
-        const largeQty = document.getElementById('large-qty');
-        largeQty.disabled = !largeCheck.checked;
-        largeQty.style.background = largeCheck.checked ? "#fff" : "#eee";
+ <table style="border-collapse:separate; border-spacing:0 0.5em; width:100%; max-width:600px; margin:auto; margin-bottom:1em;">
+  <caption style="caption-side:top; font-weight:bold; font-size:1.1em; margin-bottom:0.5em;">Service Estimator</caption>
 
-        // Calculate total
-        let total = 0;
-        let summary = [];
-        if(sedanCheck.checked) {
-            let qty = parseInt(sedanQty.value) || 0;
-            total += qty * 100;
-            summary.push(`${qty} Sedan(s)`);
-        }
-        if(smallsuvCheck.checked) {
-            let qty = parseInt(smallsuvQty.value) || 0;
-            total += qty * 150;
-            summary.push(`${qty} Small SUV(s)`);
-        }
-        if(largeCheck.checked) {
-            let qty = parseInt(largeQty.value) || 0;
-            total += qty * 200;
-            summary.push(`${qty} Large SUV/Van/Truck(s)`);
-        }
-        let resultText = total > 0 ? `Estimated Total: $${total}` : '';
-        document.getElementById('estimate-result').textContent = resultText;
-        document.getElementById('estimate-hidden').value = summary.length > 0 ? `${summary.join(', ')} | Estimate: $${total}` : '';
-    }
-    // Initialize listeners on page load
-    window.addEventListener('DOMContentLoaded', function() {
-        updateEstimator();
-    });
-    </script>
+  <tr>
+    <td style="width:2em; text-align:left; vertical-align: middle;">
+      <input type="checkbox" id="sedan-check" onchange="updateEstimator()" style="vertical-align: middle;" />
+    </td>
+    <td style="vertical-align: middle;">
+      <label for="sedan-check" style="vertical-align: middle;">Sedan</label>
+    </td>
+    <td style="width:7em; text-align:center; vertical-align: middle;">
+      <input type="number" id="sedan-qty" value="1" style="width:4em; background:#eee;" placeholder="Qty" disabled oninput="updateEstimator()" />
+    </td>
+  </tr>
 
-      <label for="message">Additional Info:</label>
-      <textarea name="message" id="message"></textarea>
+  <tr>
+    <td style="width:2em; text-align:left; vertical-align: middle;">
+      <input type="checkbox" id="smallsuv-check" onchange="updateEstimator()" style="vertical-align: middle;" />
+    </td>
+    <td style="vertical-align: middle;">
+      <label for="smallsuv-check" style="vertical-align: middle;">Small SUV</label>
+    </td>
+    <td style="width:7em; text-align:center; vertical-align: middle;">
+      <input type="number" id="smallsuv-qty" value="1" style="width:4em; background:#eee;" placeholder="Qty" disabled oninput="updateEstimator()" />
+    </td>
+  </tr>
 
-      <button type="submit">Submit</button>
-    </form>
+  <tr>
+    <td style="width:2em; text-align:left; vertical-align: middle;">
+      <input type="checkbox" id="large-check" onchange="updateEstimator()" style="vertical-align: middle;" />
+    </td>
+    <td style="vertical-align: middle;">
+      <label for="large-check" style="vertical-align: middle;">Large SUV / Van / Truck</label>
+    </td>
+    <td style="width:7em; text-align:center; vertical-align: middle;">
+      <input type="number" id="large-qty" value="1" style="width:4em; background:#eee;" placeholder="Qty" disabled oninput="updateEstimator()" />
+    </td>
+  </tr>
+ </table>
+
+ 
+  <!-- Estimate result placed just below the table -->
+  <div id="estimate-result" style="font-weight:bold; font-size:1.2em; text-align:center; margin-bottom:1.5em;"></div>
+  <input type="hidden" name="estimate" id="estimate-hidden" value="" />
+
+  <label for="message">Additional Info:</label>
+  <textarea name="message" id="message"></textarea>
+
+  <button type="submit">Submit</button>
+</form>
+
     <p id="confirmation"></p>
   </section>
 
@@ -132,43 +91,12 @@
     <p>Contact: 484-942-8485 | bryton.d.henry@gmail.com</p>
   </footer>
 
-  <script>
-    function updateEstimator() {
-      // Show/hide qty inputs
-      const sedanChecked = document.getElementById('sedan-check').checked;
-      document.getElementById('sedan-qty').style.display = sedanChecked ? 'inline-block' : 'none';
-      const smallsuvChecked = document.getElementById('smallsuv-check').checked;
-      document.getElementById('smallsuv-qty').style.display = smallsuvChecked ? 'inline-block' : 'none';
-      const largeChecked = document.getElementById('large-check').checked;
-      document.getElementById('large-qty').style.display = largeChecked ? 'inline-block' : 'none';
-
-      // Calculate total
-      let total = 0;
-      let summary = [];
-      if(sedanChecked) {
-        let qty = parseInt(document.getElementById('sedan-qty').value) || 0;
-        total += qty * 100;
-        summary.push(`${qty} Sedan(s)`);
-      }
-      if(smallsuvChecked) {
-        let qty = parseInt(document.getElementById('smallsuv-qty').value) || 0;
-        total += qty * 150;
-        summary.push(`${qty} Small SUV(s)`);
-      }
-      if(largeChecked) {
-        let qty = parseInt(document.getElementById('large-qty').value) || 0;
-        total += qty * 200;
-        summary.push(`${qty} Large SUV/Van/Truck(s)`);
-      }
-      let resultText = total > 0 ? `Estimated Total: $${total}` : '';
-      document.getElementById('estimate-result').textContent = resultText;
-      document.getElementById('estimate-hidden').value = summary.length > 0 ? `${summary.join(', ')} | Estimate: $${total}` : '';
-    }
+  <!--script>
     // Initialize listeners on page load
     window.addEventListener('DOMContentLoaded', function() {
       updateEstimator();
     });
-  </script>
+  </script-->
   <script src="script.js"></script>
 </body>
 </html>
