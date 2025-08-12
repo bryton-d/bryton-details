@@ -195,3 +195,9 @@ footer {
   color: #fff;
   font-size: 14px;
 }
+
+footer a, footer a:visited, footer a:active {
+  color: #fff !important;
+  text-decoration: underline;
+  word-break: break-all;
+}

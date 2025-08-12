@@ -28,18 +28,47 @@
   <header class="site-header">
     <div class="site-title">Bryton's Auto Detailing</div>
     <nav class="site-nav">
-      <a href="index.html" class="active">Home</a>
-      <a href="about.html">About</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="ig-posts.html">IG Posts</a>
-      <a href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener" title="Instagram">
-        <img src="images/instagram.svg" alt="Instagram" />
-      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html" class="active" aria-current="page">Home</a>
+        <a href="about.html">About</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="ig-posts.html">Posts</a>
+        <a href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener" title="Instagram">
+          <img src="images/instagram.svg" alt="Instagram social media icon" />
+        </a>
+      </nav>
     </nav>
   </header>
 
   <main>
     <h2 class="page-title">Book Your Appointment</h2>
+
+    <section class="pricing-section" style="max-width: 800px; margin: 2em auto; padding: 1.5em; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+      <h2 style="color: #004080; text-align: center;">Pricing &amp; Services</h2>
+      <p>Whether you’re looking for a quick refresh or a full detail, I keep my pricing simple and transparent so you know exactly what to expect.</p>
+
+      <p><strong>Exterior Detail</strong> – Hand wash, clean windows inside and out, and apply a ceramic spray coating that protects your paint for 2–3 months.</p>
+
+      <p><strong>Interior Detail</strong> – Vacuum every surface, clean all touchpoints, refresh carpets, and finish with a protectant to keep things looking sharp.</p>
+
+      <ul>
+        <li><strong>Sedans</strong> – $100</li>
+        <li><strong>Small SUVs</strong> – $150</li>
+        <li><strong>Large SUVs, Vans, Trucks</strong> – $200</li>
+      </ul>
+
+      <p><strong>Add-Ons:</strong></p>
+      <ul>
+        <li>Shampoo carpets &amp; upholstery – $35</li>
+        <li>Headlight polish – $25</li>
+        <li>Engine bay cleaning – $25</li>
+        <li>Plastic trim shine – $10</li>
+        <li>Wheel coating – $10</li>
+      </ul>
+
+      <p>When booking an appointment, just mention any extras you’d like in the “Additional Info” section — and I’ll make sure your ride leaves looking like new.</p>
+    </section>
+
 
     <form id="intake-form" method="POST" action="https://formspree.io/f/xvgqbqzl" class="form-card">
       <input type="hidden" name="_redirect" value="https://lumego4.github.io/bryton-details.github.io/thank-you.html" />
@@ -53,19 +82,40 @@
       <table>
         <caption>Service Estimator</caption>
         <tr>
+          <th></th>
+          <th>Vehicle Type</th>
+          <th>Qty</th>
+          <th colspan="5">Add-Ons (per vehicle)</th>
+        </tr>
+        <tr>
           <td><input type="checkbox" id="sedan-check" onchange="updateEstimator()" /></td>
           <td><label for="sedan-check">Sedan</label></td>
-          <td><input type="number" id="sedan-qty" value="0" placeholder="Qty" disabled oninput="updateEstimator()" /></td>
+          <td><input type="number" id="sedan-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" /></td>
+          <td><input type="number" id="sedan-shampoo" value="0" min="0" placeholder="Shampoo $35" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="sedan-headlight" value="0" min="0" placeholder="Headlight $25" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="sedan-engine" value="0" min="0" placeholder="Engine $25" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="sedan-plastics" value="0" min="0" placeholder="Plastics $10" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="sedan-wheel" value="0" min="0" placeholder="Wheel $10" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
         </tr>
         <tr>
           <td><input type="checkbox" id="smallsuv-check" onchange="updateEstimator()" /></td>
           <td><label for="smallsuv-check">Small SUV</label></td>
-          <td><input type="number" id="smallsuv-qty" value="0" placeholder="Qty" disabled oninput="updateEstimator()" /></td>
+          <td><input type="number" id="smallsuv-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" /></td>
+          <td><input type="number" id="smallsuv-shampoo" value="0" min="0" placeholder="Shampoo $35" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="smallsuv-headlight" value="0" min="0" placeholder="Headlight $25" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="smallsuv-engine" value="0" min="0" placeholder="Engine $25" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="smallsuv-plastics" value="0" min="0" placeholder="Plastics $10" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="smallsuv-wheel" value="0" min="0" placeholder="Wheel $10" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
         </tr>
         <tr>
           <td><input type="checkbox" id="large-check" onchange="updateEstimator()" /></td>
           <td><label for="large-check">Large SUV / Van / Truck</label></td>
-          <td><input type="number" id="large-qty" value="0" placeholder="Qty" disabled oninput="updateEstimator()" /></td>
+          <td><input type="number" id="large-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" /></td>
+          <td><input type="number" id="large-shampoo" value="0" min="0" placeholder="Shampoo $35" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="large-headlight" value="0" min="0" placeholder="Headlight $25" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="large-engine" value="0" min="0" placeholder="Engine $25" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="large-plastics" value="0" min="0" placeholder="Plastics $10" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
+          <td><input type="number" id="large-wheel" value="0" min="0" placeholder="Wheel $10" disabled oninput="updateEstimator()" style="width: 70px;" /></td>
         </tr>
       </table>
 
