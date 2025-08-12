@@ -166,6 +166,37 @@ table {
   border-spacing: 0 0.5em;
 }
 
+/* Vertically center table cells */
+table td, table th {
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+}
+
+table th:first-child,
+table td:first-child {
+  width: 40px; /* Checkbox column */
+}
+
+table th:last-child,
+table td:last-child {
+  width: 80px; /* Qty column */
+}
+
+/* Slightly raise checkboxes for better alignment */
+table input[type="checkbox"] {
+  vertical-align: middle;
+  /* Adjust the translateY value as needed for your design */
+  transform: translateY(-2px);
+}
+
+/* Make quantity input fields consistent and centered */
+table input[type="number"] {
+  width: 60px;
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+}
+
 caption {
   caption-side: top;
   font-weight: bold;
