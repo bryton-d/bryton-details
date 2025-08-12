@@ -7,16 +7,7 @@ const PRICES = {
   large: 200
 };
 
-const ADDONS = {
-  shampoo: 35,
-  headlight: 25,
-  engine: 25,
-  plastics: 10,
-  wheel: 10
-};
-
 function updateEstimator() {
-  // Vehicle selectors
   const sedanCheck = document.getElementById('sedan-check');
   const sedanQty = document.getElementById('sedan-qty');
   const smallsuvCheck = document.getElementById('smallsuv-check');
@@ -24,67 +15,37 @@ function updateEstimator() {
   const largeCheck = document.getElementById('large-check');
   const largeQty = document.getElementById('large-qty');
 
-  // Add-on selectors for each vehicle type
-  const sedanAddons = {
-    shampoo: document.getElementById('sedan-shampoo'),
-    headlight: document.getElementById('sedan-headlight'),
-    engine: document.getElementById('sedan-engine'),
-    plastics: document.getElementById('sedan-plastics'),
-    wheel: document.getElementById('sedan-wheel')
-  };
-  const smallsuvAddons = {
-    shampoo: document.getElementById('smallsuv-shampoo'),
-    headlight: document.getElementById('smallsuv-headlight'),
-    engine: document.getElementById('smallsuv-engine'),
-    plastics: document.getElementById('smallsuv-plastics'),
-    wheel: document.getElementById('smallsuv-wheel')
-  };
-  const largeAddons = {
-    shampoo: document.getElementById('large-shampoo'),
-    headlight: document.getElementById('large-headlight'),
-    engine: document.getElementById('large-engine'),
-    plastics: document.getElementById('large-plastics'),
-    wheel: document.getElementById('large-wheel')
-  };
+  // Enable/disable quantity inputs based on checkbox state
+  sedanQty.disabled = !sedanCheck.checked;
+  sedanQty.style.background = sedanCheck.checked ? "#fff" : "#eee";
 
-  // Enable/disable quantity and add-on inputs based on checkbox state
-  function setVehicleInputs(enabled, qtyInput, addons) {
-    qtyInput.disabled = !enabled;
-    qtyInput.style.background = enabled ? "#fff" : "#eee";
-    Object.values(addons).forEach(input => {
-      input.disabled = !enabled;
-      input.style.background = enabled ? "#fff" : "#eee";
-    });
-  }
-  setVehicleInputs(sedanCheck.checked, sedanQty, sedanAddons);
-  setVehicleInputs(smallsuvCheck.checked, smallsuvQty, smallsuvAddons);
-  setVehicleInputs(largeCheck.checked, largeQty, largeAddons);
+  smallsuvQty.disabled = !smallsuvCheck.checked;
+  smallsuvQty.style.background = smallsuvCheck.checked ? "#fff" : "#eee";
+
+  largeQty.disabled = !largeCheck.checked;
+  largeQty.style.background = largeCheck.checked ? "#fff" : "#eee";
 
   // Calculate estimate
   let total = 0;
   let summary = [];
 
-  function calcVehicle(type, check, qtyInput, addons) {
-    if (!check.checked) return;
-    const qty = parseInt(qtyInput.value) || 0;
-    let vehicleTotal = qty * PRICES[type];
-    let addonSummary = [];
-    Object.keys(addons).forEach(key => {
-      const addonQty = parseInt(addons[key].value) || 0;
-      if (addonQty > 0) {
-        vehicleTotal += addonQty * ADDONS[key];
-        addonSummary.push(`${addonQty} ${key.charAt(0).toUpperCase() + key.slice(1)}(s)`);
-      }
-    });
-    if (qty > 0) {
-      summary.push(`${qty} ${type.charAt(0).toUpperCase() + type.slice(1)}(s)` + (addonSummary.length ? ` with ${addonSummary.join(', ')}` : ''));
-    }
-    total += vehicleTotal;
+  if (sedanCheck.checked) {
+    const qty = parseInt(sedanQty.value) || 0;
+    total += qty * PRICES.sedan;
+    summary.push(`${qty} Sedan(s)`);
   }
 
-  calcVehicle('sedan', sedanCheck, sedanQty, sedanAddons);
-  calcVehicle('smallsuv', smallsuvCheck, smallsuvQty, smallsuvAddons);
-  calcVehicle('large', largeCheck, largeQty, largeAddons);
+  if (smallsuvCheck.checked) {
+    const qty = parseInt(smallsuvQty.value) || 0;
+    total += qty * PRICES.smallsuv;
+    summary.push(`${qty} Small SUV(s)`);
+  }
+
+  if (largeCheck.checked) {
+    const qty = parseInt(largeQty.value) || 0;
+    total += qty * PRICES.large;
+    summary.push(`${qty} Large SUV/Van/Truck(s)`);
+  }
 
   const resultText = total > 0 ? `Estimated Total: $${total}` : '';
   document.getElementById('estimate-result').textContent = resultText;
@@ -104,16 +65,14 @@ document.getElementById('intake-form').addEventListener('submit', function (even
 window.addEventListener('DOMContentLoaded', function () {
   updateEstimator();
 
-  // Attach event listeners for all relevant inputs
-  const ids = [
+  // Optional: Attach JS event listeners (redundant if using inline handlers in HTML)
+  const inputs = [
     'sedan-check', 'sedan-qty',
-    'sedan-shampoo', 'sedan-headlight', 'sedan-engine', 'sedan-plastics', 'sedan-wheel',
     'smallsuv-check', 'smallsuv-qty',
-    'smallsuv-shampoo', 'smallsuv-headlight', 'smallsuv-engine', 'smallsuv-plastics', 'smallsuv-wheel',
-    'large-check', 'large-qty',
-    'large-shampoo', 'large-headlight', 'large-engine', 'large-plastics', 'large-wheel'
+    'large-check', 'large-qty'
   ];
-  ids.forEach(id => {
+
+  inputs.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('change', updateEstimator);
