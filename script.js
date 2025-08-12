@@ -7,7 +7,16 @@ const PRICES = {
   large: 200
 };
 
+const ADDONS = {
+  shampoo: 35,
+  headlight: 25,
+  engine: 25,
+  plastics: 10,
+  wheel: 10
+};
+
 function updateEstimator() {
+  // Vehicle selectors
   const sedanCheck = document.getElementById('sedan-check');
   const sedanQty = document.getElementById('sedan-qty');
   const smallsuvCheck = document.getElementById('smallsuv-check');
@@ -18,39 +27,70 @@ function updateEstimator() {
   // Enable/disable quantity inputs based on checkbox state
   sedanQty.disabled = !sedanCheck.checked;
   sedanQty.style.background = sedanCheck.checked ? "#fff" : "#eee";
-
   smallsuvQty.disabled = !smallsuvCheck.checked;
   smallsuvQty.style.background = smallsuvCheck.checked ? "#fff" : "#eee";
-
   largeQty.disabled = !largeCheck.checked;
   largeQty.style.background = largeCheck.checked ? "#fff" : "#eee";
 
-  // Calculate estimate
-  let total = 0;
+  // Calculate base subtotal
+  let baseSubtotal = 0;
+  let totalVehicles = 0;
   let summary = [];
-
   if (sedanCheck.checked) {
     const qty = parseInt(sedanQty.value) || 0;
-    total += qty * PRICES.sedan;
+    baseSubtotal += qty * PRICES.sedan;
+    totalVehicles += qty;
     summary.push(`${qty} Sedan(s)`);
   }
-
   if (smallsuvCheck.checked) {
     const qty = parseInt(smallsuvQty.value) || 0;
-    total += qty * PRICES.smallsuv;
+    baseSubtotal += qty * PRICES.smallsuv;
+    totalVehicles += qty;
     summary.push(`${qty} Small SUV(s)`);
   }
-
   if (largeCheck.checked) {
     const qty = parseInt(largeQty.value) || 0;
-    total += qty * PRICES.large;
+    baseSubtotal += qty * PRICES.large;
+    totalVehicles += qty;
     summary.push(`${qty} Large SUV/Van/Truck(s)`);
   }
 
-  const resultText = total > 0 ? `Estimated Total: $${total}` : '';
-  document.getElementById('estimate-result').textContent = resultText;
+  // Add-ons section
+  const addonFields = [
+    { key: 'shampoo', check: 'addon-shampoo-check', qty: 'addon-shampoo-qty' },
+    { key: 'headlight', check: 'addon-headlight-check', qty: 'addon-headlight-qty' },
+    { key: 'engine', check: 'addon-engine-check', qty: 'addon-engine-qty' },
+    { key: 'plastics', check: 'addon-plastics-check', qty: 'addon-plastics-qty' },
+    { key: 'wheel', check: 'addon-wheel-check', qty: 'addon-wheel-qty' }
+  ];
+  let addonSubtotal = 0;
+  let addonSummary = [];
+  addonFields.forEach(({ key, check, qty }) => {
+    const checkEl = document.getElementById(check);
+    const qtyEl = document.getElementById(qty);
+    // Default quantity to total vehicles if checked and empty
+    if (checkEl.checked && (!qtyEl.value || qtyEl.value === "0")) {
+      qtyEl.value = totalVehicles;
+    }
+    // Disable quantity if not checked, enable if checked
+    qtyEl.disabled = !checkEl.checked;
+    qtyEl.style.background = checkEl.checked ? "#fff" : "#eee";
+    if (checkEl.checked) {
+      const addonQty = parseInt(qtyEl.value) || 0;
+      if (addonQty > 0) {
+        addonSubtotal += addonQty * ADDONS[key];
+        addonSummary.push(`${addonQty} ${key.charAt(0).toUpperCase() + key.slice(1)}(s)`);
+      }
+    }
+  });
+
+  // Update subtotals and total
+  const total = baseSubtotal + addonSubtotal;
+  document.getElementById('base-subtotal').textContent = `Base Subtotal: $${baseSubtotal}`;
+  document.getElementById('addon-subtotal').textContent = `Add-On Subtotal: $${addonSubtotal}`;
+  document.getElementById('estimate-result').textContent = total > 0 ? `Total: $${total}` : 'Total: $0';
   document.getElementById('estimate-hidden').value = summary.length > 0
-    ? `${summary.join(', ')} | Estimate: $${total}`
+    ? `${summary.join(', ')}${addonSummary.length ? ' | Add-ons: ' + addonSummary.join(', ') : ''} | Estimate: $${total}`
     : '';
 }
 
@@ -65,14 +105,18 @@ document.getElementById('intake-form').addEventListener('submit', function (even
 window.addEventListener('DOMContentLoaded', function () {
   updateEstimator();
 
-  // Optional: Attach JS event listeners (redundant if using inline handlers in HTML)
-  const inputs = [
+  // Attach event listeners for all relevant inputs
+  const ids = [
     'sedan-check', 'sedan-qty',
     'smallsuv-check', 'smallsuv-qty',
-    'large-check', 'large-qty'
+    'large-check', 'large-qty',
+    'addon-shampoo-check', 'addon-shampoo-qty',
+    'addon-headlight-check', 'addon-headlight-qty',
+    'addon-engine-check', 'addon-engine-qty',
+    'addon-plastics-check', 'addon-plastics-qty',
+    'addon-wheel-check', 'addon-wheel-qty'
   ];
-
-  inputs.forEach(id => {
+  ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('change', updateEstimator);
