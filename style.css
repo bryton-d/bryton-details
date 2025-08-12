@@ -1,24 +1,21 @@
 /* Base Styles */
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background: #f7f7f7;
-  color: #222;
+  background: #fff;
+  color: #111;
   line-height: 1.6;
 }
 
+
 /* Header */
-header {
+header, .site-header {
   text-align: center;
   padding: 40px 20px;
-  background: #004080;
+  background: #000;
   color: #fff;
-}
-
-header h1 span {
-  font-weight: bold;
-  color: #ffffff;
 }
 
 h2 {
@@ -39,10 +36,12 @@ section {
   color: #fff;
 }
 
+
 .site-title {
   font-size: 2em;
   font-style: italic;
   font-weight: bold;
+  color: #fff;
 }
 
 .site-subtitle {
@@ -50,33 +49,44 @@ section {
   margin: 0.5em 0 0.7em 0;
 }
 
+
 .site-nav {
   margin: 0.7em 0 0.5em 0;
   display: flex;
   justify-content: center;
   gap: 1.5em;
   align-items: center;
-  flex-wrap: wrap; /* <-- Add this to allow wrapping on small screens */
-  overflow-x: auto; /* <-- Add this for horizontal scroll fallback */
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+.site-nav a {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 500;
+  font-size: 1.05em;
+  padding: 0.2em 0.7em;
+  border-radius: 5px;
+  background: transparent;
+  transition: outline 0.2s, background 0.2s;
+  outline: none;
 }
 
 .site-nav a.active {
   font-weight: 700;
   text-decoration: underline;
+  background: #222;
 }
 
-.site-nav a {
-  color: #b8d7f5;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1.05em;
-  padding: 0.2em 0.7em;
-  border-radius: 5px;
-  transition: background 0.2s;
+.site-nav a:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  background: #222;
 }
 
 .site-nav a:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #222;
+  text-decoration: underline;
 }
 
 .site-nav img {
@@ -84,7 +94,9 @@ section {
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   vertical-align: middle;
+  background: #fff;
 }
+
 
 @media (max-width: 600px) {
   .site-nav {
@@ -101,61 +113,83 @@ section {
     margin: 0.1em 0.1em;
   }
   .site-nav img {
-    height: 1.7em; /* Slightly smaller for mobile */
+    height: 1.7em;
     min-width: 1.7em;
   }
 }
 
+
 /* Form */
 form {
-  background: #ffffff;
+  background: #fff;
   padding: 20px;
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   max-width: 600px;
-  margin: 0 auto; /* center the form */
+  margin: 0 auto;
   box-sizing: border-box;
+  color: #111;
 }
 
 input, select, textarea {
   width: 100%;
   margin-bottom: 15px;
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 4px;
   box-sizing: border-box;
   background-color: #fff;
-  color: #222;
+  color: #111;
   font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
 input:disabled {
-  background-color: #e9ecef;
-  color: #666;
+  background-color: #f4f4f4;
+  color: #888;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+  border-color: #000;
+  box-shadow: 0 0 0 2px #ccc;
 }
 
 label {
   font-weight: 600;
   margin-bottom: 5px;
   display: inline-block;
+  color: #111;
 }
+
 
 /* Buttons */
 button {
-  background: #007BFF;
-  color: white;
+  background: #000;
+  color: #fff;
   padding: 12px 16px;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s, outline 0.2s;
+  outline: none;
+}
+
+button:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+  background: #333;
 }
 
 button:hover {
-  background: #0056b3;
+  background: #333;
+  color: #fff;
+  text-decoration: underline;
 }
+
 
 /* Table (Vehicle Selector) */
 table {
@@ -164,6 +198,8 @@ table {
   margin: auto;
   border-collapse: separate;
   border-spacing: 0 0.5em;
+  background: #fff;
+  color: #111;
 }
 
 /* Vertically center table cells */
@@ -174,27 +210,33 @@ table td, table th {
 
 table th:first-child,
 table td:first-child {
-  width: 40px; /* Checkbox column */
+  width: 40px;
 }
 
 table th:last-child,
 table td:last-child {
-  width: 80px; /* Qty column */
+  width: 80px;
 }
 
-/* Slightly raise checkboxes for better alignment */
 table input[type="checkbox"] {
   vertical-align: middle;
-  /* Adjust the translateY value as needed for your design */
+  accent-color: #000;
   transform: translateY(-2px);
 }
 
-/* Make quantity input fields consistent and centered */
+table input[type="checkbox"]:focus {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
 table input[type="number"] {
   width: 60px;
   text-align: center;
   margin: 0 auto;
   display: block;
+  color: #111;
+  background: #fff;
+  border: 1px solid #333;
 }
 
 caption {
@@ -202,27 +244,30 @@ caption {
   font-weight: bold;
   font-size: 1.1em;
   margin-bottom: 0.5em;
+  color: #111;
 }
 
 td input[type="checkbox"] {
   vertical-align: middle;
-  transform: translateY(4.5px); /* visually aligns with label */
+  transform: translateY(4.5px);
 }
+
 
 /* Estimate Result Box */
 #estimate-result {
   text-align: center;
   font-size: 1.2em;
   font-weight: bold;
-  color: #333;
+  color: #111;
   margin-bottom: 1.5em;
 }
+
 
 /* Footer */
 footer {
   text-align: center;
   padding: 20px;
-  background: #004080;
+  background: #000;
   color: #fff;
   font-size: 14px;
 }
@@ -231,4 +276,46 @@ footer a, footer a:visited, footer a:active {
   color: #fff !important;
   text-decoration: underline;
   word-break: break-all;
+}
+
+/* Utility: Gray backgrounds for blocks */
+.gray-bg {
+  background: #f4f4f4;
+  color: #111;
+}
+
+/* Utility: White background for main content blocks */
+.white-bg {
+  background: #fff;
+  color: #111;
+}
+
+/* Utility: Black background for header/footer */
+.black-bg {
+  background: #000;
+  color: #fff;
+}
+
+/* Utility: For blocks with subtle border */
+.bordered {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Focus visible for all interactive elements */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2.5px solid #000;
+  outline-offset: 2px;
+}
+
+/* Ensure link hover/focus is visible and not color-only */
+a:hover, a:focus {
+  text-decoration: underline;
+  background: #222;
+  color: #fff !important;
+}
+
+/* For accessibility: never use light gray for text on white */
+.light-text {
+  color: #888;
 }
