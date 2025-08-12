@@ -8,7 +8,8 @@ const PRICES = {
 };
 
 const ADDONS = {
-  shampoo: 35,
+  shampooSedan: 35,
+  shampooVan: 50,
   headlight: 25,
   engine: 25,
   plastics: 10,
@@ -57,7 +58,8 @@ function updateEstimator() {
 
   // Add-ons section
   const addonFields = [
-    { key: 'shampoo', check: 'addon-shampoo-check', qty: 'addon-shampoo-qty' },
+    { key: 'shampooSedan', check: 'addon-shampoo-sedan-check', qty: 'addon-shampoo-sedan-qty' },
+    { key: 'shampooVan', check: 'addon-shampoo-van-check', qty: 'addon-shampoo-van-qty' },
     { key: 'headlight', check: 'addon-headlight-check', qty: 'addon-headlight-qty' },
     { key: 'engine', check: 'addon-engine-check', qty: 'addon-engine-qty' },
     { key: 'plastics', check: 'addon-plastics-check', qty: 'addon-plastics-qty' },
@@ -110,7 +112,8 @@ window.addEventListener('DOMContentLoaded', function () {
     'sedan-check', 'sedan-qty',
     'smallsuv-check', 'smallsuv-qty',
     'large-check', 'large-qty',
-    'addon-shampoo-check', 'addon-shampoo-qty',
+    'addon-shampoo-sedan-check', 'addon-shampoo-sedan-qty',
+    'addon-shampoo-van-check', 'addon-shampoo-van-qty',
     'addon-headlight-check', 'addon-headlight-qty',
     'addon-engine-check', 'addon-engine-qty',
     'addon-plastics-check', 'addon-plastics-qty',
