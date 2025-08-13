@@ -11,7 +11,7 @@
       font-weight: bold;
       text-align: center;
       margin: 1.5em 0;
-      color: #004080; /* Darker blue for accessibility */
+      color: #111;
     }
     .testimonial-block {
       margin: 2.5em auto;
@@ -33,10 +33,10 @@
     .testimonial-author {
       font-weight: bold;
       font-size: 1.15em;
-      color: #004080; /* ← this is too light on a light background */
+      color: #111;
       margin-bottom: 0.5em;
       letter-spacing: 0.01em;
-     }
+    }
     .testimonial-image {
       flex: 1 1 300px;
       display: flex;
@@ -60,24 +60,22 @@
   </style>
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header black-bg">
     <div class="site-title">Bryton's Auto Detailing</div>
-    <nav class="site-nav">
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="testimonials.html" class="active" aria-current="page">Testimonials</a>
-        <a href="ig-posts.html">Posts</a>
-        <a href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener" title="Instagram">
-          <img src="images/instagram.svg" alt="Instagram social media icon" />
-        </a>
-      </nav>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="testimonials.html" class="active" aria-current="page">Testimonials</a>
+      <a href="ig-posts.html">Posts</a>
+      <a href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener" title="Instagram">
+        <img src="images/instagram.svg" alt="Instagram social media icon" />
+      </a>
     </nav>
   </header>
 
   <main>
     <div class="testimonial-title">Customer Satisfaction Guaranteed</div>
-    <div class="testimonial-block">
+    <div class="testimonial-block white-bg bordered">
       <div class="testimonial-text">
         "Bryton did an excellent job detailing my car. His love for all things automotive was evident in his care and attention to detail….BRAVO!!!!!!"
       </div>
@@ -92,15 +90,15 @@
         Sarah, Media, PA
       </div>
     </div>
-    <div class="testimonial-block">
+    <div class="testimonial-block white-bg bordered">
       <div class="testimonial-text">
-        We scheduled an appointment with Bryton. That weekend, he came by and detailed our three cars. Our cars looked like new and it very convenient.
+        We scheduled an appointment with Bryton. That weekend, he came by and detailed our three cars. Our cars looked like new and it was very convenient.
       </div>
       <div class="testimonial-author">
         Mike, Royersford, PA
       </div>
     </div>
-    <div class="testimonial-block">
+    <div class="testimonial-block white-bg bordered">
       <div class="testimonial-text">
         With three kids and a full-time job, it was nice to have someone arrive out our place and detail my car. Highly recommend!
       </div>
@@ -111,7 +109,7 @@
     <!-- Add more testimonials below as needed -->
   </main>
 
-  <footer style="text-align: center; margin-top: 2em;">
+  <footer class="black-bg">
     <p>Contact: 484-942-8485 | bryton.d.henry@gmail.com</p>
   </footer>
 </body>
