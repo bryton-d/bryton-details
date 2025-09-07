@@ -8,12 +8,12 @@ const PRICES = {
 };
 
 const ADDONS = {
-  shampooSedan: 35,
+  shampooSedan: 25,
   shampooVan: 50,
   headlight: 25,
   engine: 25,
-  plastics: 10,
-  wheel: 10
+  plastics: 15,
+  wheel: 15
 };
 
 function updateEstimator() {
