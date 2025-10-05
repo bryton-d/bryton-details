@@ -16,6 +16,49 @@ const ADDONS = {
   wheel: 15
 };
 
+function toggleServices(type) {
+  const checked = document.getElementById(`${type}-check`).checked;
+  const qty = document.getElementById(`${type}-qty`);
+  qty.disabled = !checked;
+  if (!checked) qty.value = 0;
+
+  document.querySelectorAll(`.${type}-service`).forEach(row => {
+    row.style.display = checked ? 'table-row' : 'none';
+    const input = row.querySelector('input[type="number"]');
+    if (!checked && input) input.value = 0;
+    const cb = row.querySelector('input[type="checkbox"]');
+    if (!checked && cb) cb.checked = false;
+  });
+
+  if (checked) {
+    syncServiceQty(type);
+  }
+}
+
+function syncServiceQty(type) {
+  const qty = document.getElementById(`${type}-qty`).value;
+  document.querySelectorAll(`.${type}-service input[type="number"]`).forEach(input => {
+    if (!input.disabled) {
+      input.value = qty;
+    }
+  });
+}
+
+function toggleServiceItem(type, service) {
+  const check = document.getElementById(`${type}-${service}-check`);
+  const input = document.getElementById(`${type}-${service}`);
+  const qty = document.getElementById(`${type}-qty`).value;
+  if (check.checked) {
+    input.disabled = false;
+    input.value = qty;
+  } else {
+    input.disabled = true;
+    input.value = 0;
+  }
+  updateEstimator();
+}
+
+
 function updateEstimator() {
   // Vehicle selectors
   const sedanCheck = document.getElementById('sedan-check');
