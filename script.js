@@ -55,6 +55,66 @@ function getAddonPrice(key) {
   return ADDON_PRICES?.[key] ?? 0;
 }
 
+// Human-friendly labels for summary
+const VEHICLE_LABEL = {
+  sedan: 'Sedan',
+  smallsuv: 'Small SUV',
+  large: 'Large SUV/Van/Truck'
+};
+
+const SERVICE_LABEL = {
+  interior: 'Interior',
+  exterior: 'Exterior',
+  interiorexterior: 'Interior & Exterior'
+};
+
+const ADDON_LABEL = {
+  'shampoo-sedan': 'Seat Shampooing',
+  headlight: 'Headlight Polish',
+  engine: 'Engine Bay Cleaning',
+  plastics: 'Plastic Trim Shine'
+};
+
+function buildEstimateSummary(baseSelections, addonSelections, totals) {
+  // Group base selections by vehicle type
+  const byType = {};
+  baseSelections.forEach(item => {
+    if (!byType[item.type]) byType[item.type] = { qty: 0, lines: [] };
+    // Read vehicle qty for header count
+    const vqty = parseInt((document.getElementById(`${item.type}-qty`) || { value: 0 }).value, 10) || 0;
+    byType[item.type].qty = Math.max(byType[item.type].qty, vqty);
+    const serviceName = SERVICE_LABEL[item.service] || item.service;
+    byType[item.type].lines.push(`  • ${serviceName} (${item.qty} @ ${formatCurrency(item.price)} = ${formatCurrency(item.line)})`);
+  });
+
+  const parts = [];
+  if (Object.keys(byType).length) {
+    parts.push('--- Base Services ---');
+    Object.entries(byType).forEach(([type, info]) => {
+      const label = VEHICLE_LABEL[type] || type;
+      const qtyDisplay = info.qty > 0 ? ` (x${info.qty})` : '';
+      parts.push(`${label}${qtyDisplay}`);
+      info.lines.forEach(l => parts.push(l));
+      parts.push(''); // blank line between vehicle groups
+    });
+  }
+
+  if (addonSelections.length) {
+    parts.push('--- Add-Ons ---');
+    addonSelections.forEach(a => {
+      const name = ADDON_LABEL[a.key] || a.key;
+      parts.push(`  • ${name} (${a.qty} @ ${formatCurrency(a.price)} = ${formatCurrency(a.line)})`);
+    });
+    parts.push('');
+  }
+
+  parts.push(`Base Total: ${formatCurrency(totals.base)}`);
+  parts.push(`Add-On Total: ${formatCurrency(totals.addons)}`);
+  parts.push(`Overall Estimate: ${formatCurrency(totals.total)}`);
+
+  return parts.join('\n');
+}
+
 function toggleServices(type) {
   const checked = document.getElementById(`${type}-check`).checked;
   const qty = document.getElementById(`${type}-qty`);
@@ -179,18 +239,58 @@ function updateEstimator() {
   if (addonEl) addonEl.textContent = `Add-On Subtotal: ${formatCurrency(addonSubtotal)}`;
   if (totalEl) totalEl.textContent = `Total: ${formatCurrency(total)}`;
 
-  // Hidden summary (compact JSON string)
+  // Build human-readable summary string
+  const parts = [];
+  // Group base selections by vehicle type to show counts and services per type
+  const byType = {};
+  baseSelections.forEach(item => {
+    if (!byType[item.type]) byType[item.type] = { qty: 0, services: new Set() };
+    // Vehicle qty can be read from the vehicle qty input to avoid double counting
+    const vqty = parseInt((document.getElementById(`${item.type}-qty`) || { value: 0 }).value, 10) || 0;
+    byType[item.type].qty = Math.max(byType[item.type].qty, vqty);
+    byType[item.type].services.add(item.service);
+  });
+  Object.entries(byType).forEach(([type, info]) => {
+    if (info.qty > 0) {
+      const label = VEHICLE_LABEL[type] || type;
+      const plural = info.qty > 1 ? 's' : '';
+      const services = Array.from(info.services).map(s => SERVICE_LABEL[s] || s).join(' + ');
+      parts.push(`${info.qty} ${label}${plural}${services ? ` | ${services}` : ''}`);
+    }
+  });
+
+  // Add-ons list
+  if (addonSelections.length) {
+    const addonNames = addonSelections.map(a => ADDON_LABEL[a.key] || a.key).join(', ');
+    if (addonNames) parts.push(`Add-ons: ${addonNames}`);
+  }
+
+  // Append total at the end
+  parts.push(`Estimate ${formatCurrency(total)}`);
+
+  const summaryStr = parts.join(' | ');
+
+  // Hidden summary (readable multiline string for Formspree)
   const hidden = document.getElementById('estimate-hidden');
-  const summary = {
-    base: baseSelections,
-    addons: addonSelections,
-    totals: { base: baseSubtotal, addons: addonSubtotal, total }
-  };
-  if (hidden) hidden.value = (baseSelections.length || addonSelections.length) ? JSON.stringify(summary) : '';
+  const full = buildEstimateSummary(baseSelections, addonSelections, { base: baseSubtotal, addons: addonSubtotal, total });
+  if (hidden) hidden.value = (baseSelections.length || addonSelections.length) ? full : '';
 }
 
 // Display confirmation message after form submit
 document.getElementById('intake-form').addEventListener('submit', function (event) {
+  // Ensure estimator and hidden summary are current
+  try { updateEstimator(); } catch {}
+  // Strip non-essential fields from submission so Formspree gets a concise payload
+  try {
+    const form = document.getElementById('intake-form');
+    const allow = new Set(['name', 'email', 'estimate', 'message', '_redirect']);
+    // Remove name attribute from all but the allowed ones so they won't be submitted
+    Array.from(form.elements).forEach(el => {
+      if (el.name && !allow.has(el.name)) {
+        el.removeAttribute('name');
+      }
+    });
+  } catch {}
   const name = document.getElementById('name').value;
   document.getElementById('confirmation').innerText =
     `Thanks, ${name}! We’ve received your request.`;
