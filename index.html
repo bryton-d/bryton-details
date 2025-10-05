@@ -22,6 +22,42 @@
       border-radius: 12px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
+
+    /* checkbox visual rules (more explicit & robust) */
+    input[type="checkbox"] {
+      transition: opacity 120ms ease, transform 120ms ease, filter 120ms ease;
+      vertical-align: middle;
+      margin-right: 6px;
+      cursor: pointer;
+      accent-color: #004080; /* keeps color consistent in modern browsers */
+    }
+
+    /* explicitly dim unchecked checkboxes */
+    input[type="checkbox"]:not(:checked) {
+      opacity: 0.45;
+      filter: grayscale(60%);
+    }
+
+    /* full-strength when checked */
+    input[type="checkbox"]:checked {
+      opacity: 1;
+      filter: none;
+    }
+
+    /* disabled state — clearly dim and unclickable */
+    input[type="checkbox"]:disabled {
+      opacity: 0.35 !important;
+      cursor: not-allowed;
+      filter: grayscale(80%);
+    }
+
+    /* optional: make service number inputs visibly disabled/enabled */
+    input[type="number"][disabled] {
+      background: #eee;
+    }
+    input[type="number"]:not([disabled]) {
+      background: #fff;
+    }
   </style>
 </head>
 <body>

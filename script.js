@@ -36,10 +36,23 @@ function toggleServices(type) {
 }
 
 function syncServiceQty(type) {
-  const qty = document.getElementById(`${type}-qty`).value;
-  document.querySelectorAll(`.${type}-service input[type="number"]`).forEach(input => {
-    if (!input.disabled) {
+  // Read vehicle total quantity (as number)
+  const qty = parseInt(document.getElementById(`${type}-qty`).value) || 0;
+  // For each service row: if its checkbox is checked, enable the number input and set it to vehicle qty.
+  document.querySelectorAll(`.${type}-service`).forEach(row => {
+    const cb = row.querySelector('input[type="checkbox"]');
+    const input = row.querySelector('input[type="number"]');
+    if (!input || !cb) return;
+    if (cb.checked && qty > 0) {
+      input.disabled = false;
       input.value = qty;
+    } else if (cb.checked && qty === 0) {
+      // checked but vehicle qty 0: enable input but keep value 0 so user can adjust
+      input.disabled = false;
+      input.value = 0;
+    } else {
+      input.disabled = true;
+      input.value = 0;
     }
   });
 }
@@ -48,9 +61,12 @@ function toggleServiceItem(type, service) {
   const check = document.getElementById(`${type}-${service}-check`);
   const input = document.getElementById(`${type}-${service}`);
   const qty = document.getElementById(`${type}-qty`).value;
+  if (!input || !check) return;
+  const vehicleQty = parseInt(qty) || 0;
   if (check.checked) {
     input.disabled = false;
-    input.value = qty;
+    // if vehicle has a positive qty, initialize service qty to match it
+    input.value = vehicleQty > 0 ? vehicleQty : 0;
   } else {
     input.disabled = true;
     input.value = 0;
@@ -150,19 +166,43 @@ document.getElementById('intake-form').addEventListener('submit', function (even
 window.addEventListener('DOMContentLoaded', function () {
   updateEstimator();
 
-  // Attach event listeners for all relevant inputs
-  const ids = [
-    'sedan-check', 'sedan-qty',
-    'smallsuv-check', 'smallsuv-qty',
-    'large-check', 'large-qty',
-    'addon-shampoo-sedan-check', 'addon-shampoo-sedan-qty',
-    'addon-shampoo-van-check', 'addon-shampoo-van-qty',
-    'addon-headlight-check', 'addon-headlight-qty',
-    'addon-engine-check', 'addon-engine-qty',
-    'addon-plastics-check', 'addon-plastics-qty',
-    'addon-wheel-check', 'addon-wheel-qty'
+  // Attach listeners per vehicle type and their services so syncing works
+  const vehicleTypes = ['sedan', 'smallsuv', 'large'];
+  const services = ['interior', 'exterior', 'interiorexterior'];
+
+  vehicleTypes.forEach(type => {
+    const typeCheck = document.getElementById(`${type}-check`);
+    const typeQty = document.getElementById(`${type}-qty`);
+    if (typeCheck) typeCheck.addEventListener('change', () => { toggleServices(type); updateEstimator(); });
+    if (typeQty) {
+      typeQty.addEventListener('input', () => { syncServiceQty(type); updateEstimator(); });
+      typeQty.addEventListener('change', () => { syncServiceQty(type); updateEstimator(); });
+    }
+
+    // attach service checkbox listeners and number input listeners
+    services.forEach(service => {
+      const sid = `${type}-${service}-check`;
+      const cid = document.getElementById(sid);
+      if (cid) cid.addEventListener('change', () => { toggleServiceItem(type, service); });
+
+      const nid = `${type}-${service}`;
+      const nEl = document.getElementById(nid);
+      if (nEl) {
+        nEl.addEventListener('input', updateEstimator);
+      }
+    });
+  });
+
+  // Attach listeners for addon fields
+  const addonIds = [
+    'addon-shampoo-sedan-check','addon-shampoo-sedan-qty',
+    'addon-shampoo-van-check','addon-shampoo-van-qty',
+    'addon-headlight-check','addon-headlight-qty',
+    'addon-engine-check','addon-engine-qty',
+    'addon-plastics-check','addon-plastics-qty',
+    'addon-wheel-check','addon-wheel-qty'
   ];
-  ids.forEach(id => {
+  addonIds.forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('change', updateEstimator);
@@ -171,11 +211,3 @@ window.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-
-document.getElementById('intake-form').addEventListener('submit', function (event) {
-  const name = document.getElementById('name').value;
-  const service = document.getElementById('service').value;
-
-  document.getElementById('confirmation').innerText = 
-    `Thanks, ${name}! We’ve received your request for a ${service}.`;
-});
