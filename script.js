@@ -1,20 +1,59 @@
 
 
-// Estimate prices
-const PRICES = {
-  sedan: 100,
-  smallsuv: 150,
-  large: 200
+// Price maps used by estimator; prefer data-price attribute on elements if present.
+const BASE_PRICES = {
+  sedan: { interior: 75, exterior: 50, interiorexterior: 100 },
+  smallsuv: { interior: 100, exterior: 75, interiorexterior: 150 },
+  // NOTE: If you want a different bundle price, update here or add data-price on the checkbox.
+  large: { interior: 125, exterior: 100, interiorexterior: 200 }
 };
 
-const ADDONS = {
-  shampooSedan: 25,
-  shampooVan: 50,
-  headlight: 25,
-  engine: 25,
-  plastics: 15,
-  wheel: 15
+// Add-on prices keyed by the id middle segment after `addon-` in the HTML.
+// These correspond to the current rows in index.html.
+const ADDON_PRICES = {
+  'shampoo-sedan': 50,     // Seat Shampooing ($50)
+  'headlight': 25,         // Headlight Polish ($25)
+  'engine': 25,            // Engine Bay Cleaning ($25)
+  'plastics': 25           // Plastic Trim Shine ($25)
 };
+
+function formatCurrency(n) {
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
+  } catch {
+    // minimal fallback
+    return `$${(n || 0).toLocaleString()}`;
+  }
+}
+
+function getQtyFromInput(el) {
+  if (!el || el.disabled) return 0;
+  const v = parseInt(el.value, 10);
+  return Number.isFinite(v) && v > 0 ? v : 0;
+}
+
+function getServicePrice(type, service) {
+  // Prefer data-price on checkbox or number input
+  const cb = document.getElementById(`${type}-${service}-check`);
+  const input = document.getElementById(`${type}-${service}`);
+  const dataVal = (cb && cb.dataset && cb.dataset.price) || (input && input.dataset && input.dataset.price);
+  const parsed = dataVal ? parseFloat(dataVal) : NaN;
+  if (!Number.isNaN(parsed)) return parsed;
+  // Fallback to map
+  return BASE_PRICES?.[type]?.[service] ?? 0;
+}
+
+function getAddonPrice(key) {
+  // key corresponds to the id fragment after `addon-` (e.g., 'headlight')
+  // Prefer data-price on checkbox if present
+  const cb = document.getElementById(`addon-${key}-check`);
+  const input = document.getElementById(`addon-${key}-qty`);
+  const dataVal = (cb && cb.dataset && cb.dataset.price) || (input && input.dataset && input.dataset.price);
+  const parsed = dataVal ? parseFloat(dataVal) : NaN;
+  if (!Number.isNaN(parsed)) return parsed;
+  // Fallback
+  return ADDON_PRICES?.[key] ?? 0;
+}
 
 function toggleServices(type) {
   const checked = document.getElementById(`${type}-check`).checked;
@@ -77,82 +116,77 @@ function toggleServiceItem(type, service) {
 
 function updateEstimator() {
   // Vehicle selectors
+  const vehicleTypes = ['sedan', 'smallsuv', 'large'];
+  const services = ['interior', 'exterior', 'interiorexterior'];
+
+  // Enable/disable quantity inputs based on checkbox state (visual only)
   const sedanCheck = document.getElementById('sedan-check');
   const sedanQty = document.getElementById('sedan-qty');
   const smallsuvCheck = document.getElementById('smallsuv-check');
   const smallsuvQty = document.getElementById('smallsuv-qty');
   const largeCheck = document.getElementById('large-check');
   const largeQty = document.getElementById('large-qty');
+  if (sedanQty && sedanCheck) { sedanQty.disabled = !sedanCheck.checked; sedanQty.style.background = sedanCheck.checked ? '#fff' : '#eee'; }
+  if (smallsuvQty && smallsuvCheck) { smallsuvQty.disabled = !smallsuvCheck.checked; smallsuvQty.style.background = smallsuvCheck.checked ? '#fff' : '#eee'; }
+  if (largeQty && largeCheck) { largeQty.disabled = !largeCheck.checked; largeQty.style.background = largeCheck.checked ? '#fff' : '#eee'; }
 
-  // Enable/disable quantity inputs based on checkbox state
-  sedanQty.disabled = !sedanCheck.checked;
-  sedanQty.style.background = sedanCheck.checked ? "#fff" : "#eee";
-  smallsuvQty.disabled = !smallsuvCheck.checked;
-  smallsuvQty.style.background = smallsuvCheck.checked ? "#fff" : "#eee";
-  largeQty.disabled = !largeCheck.checked;
-  largeQty.style.background = largeCheck.checked ? "#fff" : "#eee";
-
-  // Calculate base subtotal
+  // Calculate base subtotal by summing checked sub-items only
   let baseSubtotal = 0;
-  let totalVehicles = 0;
-  let summary = [];
-  if (sedanCheck.checked) {
-    const qty = parseInt(sedanQty.value) || 0;
-    baseSubtotal += qty * PRICES.sedan;
-    totalVehicles += qty;
-    summary.push(`${qty} Sedan(s)`);
-  }
-  if (smallsuvCheck.checked) {
-    const qty = parseInt(smallsuvQty.value) || 0;
-    baseSubtotal += qty * PRICES.smallsuv;
-    totalVehicles += qty;
-    summary.push(`${qty} Small SUV(s)`);
-  }
-  if (largeCheck.checked) {
-    const qty = parseInt(largeQty.value) || 0;
-    baseSubtotal += qty * PRICES.large;
-    totalVehicles += qty;
-    summary.push(`${qty} Large SUV/Van/Truck(s)`);
-  }
-
-  // Add-ons section
-  const addonFields = [
-    { key: 'shampooSedan', check: 'addon-shampoo-sedan-check', qty: 'addon-shampoo-sedan-qty' },
-    { key: 'shampooVan', check: 'addon-shampoo-van-check', qty: 'addon-shampoo-van-qty' },
-    { key: 'headlight', check: 'addon-headlight-check', qty: 'addon-headlight-qty' },
-    { key: 'engine', check: 'addon-engine-check', qty: 'addon-engine-qty' },
-    { key: 'plastics', check: 'addon-plastics-check', qty: 'addon-plastics-qty' },
-    { key: 'wheel', check: 'addon-wheel-check', qty: 'addon-wheel-qty' }
-  ];
-  let addonSubtotal = 0;
-  let addonSummary = [];
-  addonFields.forEach(({ key, check, qty }) => {
-    const checkEl = document.getElementById(check);
-    const qtyEl = document.getElementById(qty);
-    // Default quantity to total vehicles if checked and empty
-    if (checkEl.checked && (!qtyEl.value || qtyEl.value === "0")) {
-      qtyEl.value = totalVehicles;
-    }
-    // Disable quantity if not checked, enable if checked
-    qtyEl.disabled = !checkEl.checked;
-    qtyEl.style.background = checkEl.checked ? "#fff" : "#eee";
-    if (checkEl.checked) {
-      const addonQty = parseInt(qtyEl.value) || 0;
-      if (addonQty > 0) {
-        addonSubtotal += addonQty * ADDONS[key];
-        addonSummary.push(`${addonQty} ${key.charAt(0).toUpperCase() + key.slice(1)}(s)`);
-      }
-    }
+  const baseSelections = [];
+  vehicleTypes.forEach(type => {
+    // Only consider services if vehicle type is active (checked)
+    const vcb = document.getElementById(`${type}-check`);
+    if (!vcb || !vcb.checked) return;
+    services.forEach(service => {
+      const cb = document.getElementById(`${type}-${service}-check`);
+      const qtyEl = document.getElementById(`${type}-${service}`);
+      if (!cb || !qtyEl) return;
+      if (!cb.checked || qtyEl.disabled) return;
+      const qty = getQtyFromInput(qtyEl);
+      if (qty <= 0) return;
+      const price = getServicePrice(type, service);
+      const line = qty * price;
+      baseSubtotal += line;
+      baseSelections.push({ type, service, qty, price, line });
+    });
   });
 
-  // Update subtotals and total
+  // Add-ons: compute from the add-on rows present in the DOM
+  const addonKeys = ['shampoo-sedan', 'headlight', 'engine', 'plastics'];
+  let addonSubtotal = 0;
+  const addonSelections = [];
+  addonKeys.forEach(key => {
+    const cb = document.getElementById(`addon-${key}-check`);
+    const qtyEl = document.getElementById(`addon-${key}-qty`);
+    if (!cb || !qtyEl) return;
+    qtyEl.disabled = !cb.checked; // keep UI state consistent
+    qtyEl.style.background = cb.checked ? '#fff' : '#eee';
+    if (!cb.checked || qtyEl.disabled) return;
+    const qty = getQtyFromInput(qtyEl);
+    if (qty <= 0) return;
+    const price = getAddonPrice(key);
+    const line = qty * price;
+    addonSubtotal += line;
+    addonSelections.push({ key, qty, price, line });
+  });
+
+  // Totals and outputs
   const total = baseSubtotal + addonSubtotal;
-  document.getElementById('base-subtotal').textContent = `Base Subtotal: $${baseSubtotal}`;
-  document.getElementById('addon-subtotal').textContent = `Add-On Subtotal: $${addonSubtotal}`;
-  document.getElementById('estimate-result').textContent = total > 0 ? `Total: $${total}` : 'Total: $0';
-  document.getElementById('estimate-hidden').value = summary.length > 0
-    ? `${summary.join(', ')}${addonSummary.length ? ' | Add-ons: ' + addonSummary.join(', ') : ''} | Estimate: $${total}`
-    : '';
+  const baseEl = document.getElementById('base-subtotal');
+  const addonEl = document.getElementById('addon-subtotal');
+  const totalEl = document.getElementById('estimate-result');
+  if (baseEl) baseEl.textContent = `Base Subtotal: ${formatCurrency(baseSubtotal)}`;
+  if (addonEl) addonEl.textContent = `Add-On Subtotal: ${formatCurrency(addonSubtotal)}`;
+  if (totalEl) totalEl.textContent = `Total: ${formatCurrency(total)}`;
+
+  // Hidden summary (compact JSON string)
+  const hidden = document.getElementById('estimate-hidden');
+  const summary = {
+    base: baseSelections,
+    addons: addonSelections,
+    totals: { base: baseSubtotal, addons: addonSubtotal, total }
+  };
+  if (hidden) hidden.value = (baseSelections.length || addonSelections.length) ? JSON.stringify(summary) : '';
 }
 
 // Display confirmation message after form submit
