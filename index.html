@@ -75,32 +75,38 @@
   </header>
 
   <main>
+    <!-- ===== BEGIN Pricing & Services copy (Silver/Gold package model) ===== -->
     <section class="pricing-section white-bg bordered" style="max-width: 800px; margin: 2em auto; padding: 1.5em; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
       <h2 style="text-align: center;">Pricing &amp; Services</h2>
-      
-      <p>Your vehicle deserves the right level of care, inside and out. Below you’ll find a breakdown of my detailing services and optional add-ons, with pricing based on your vehicle size.</p>
-      
-      <p><strong>Interior Detail</strong> – Vacuum all surfaces, clean touchpoints, clean interior windows, and apply a protectant to keep your interior looking fresh.</p>
 
-      <p><strong>Exterior Detail</strong> – Hand wash, clean windows inside and out, clean and protect wheels, and apply a ceramic spray that provides 6–8 weeks of paint protection.</p>
+      <p>Your vehicle deserves the right level of care, inside and out. Choose from my Silver and Gold detailing packages for the interior and exterior, with pricing based on your vehicle size.</p>
+
+      <h3>Interior Packages</h3>
+      <p><strong>Silver Interior</strong> – Blow out, full vacuum, clean all touch points, window cleaning, plastic shine/protection, and carpet cleaning.</p>
+      <p><strong>Gold Interior</strong> – Everything in Silver Interior, plus steam cleaning and cat/dog hair removal.</p>
+
+      <h3>Exterior Packages</h3>
+      <p><strong>Silver Exterior</strong> – Hand wash, hand dry, window cleaning, tire shine, wheel detailing, and a ceramic spray for lasting paint protection.</p>
+      <p><strong>Gold Exterior</strong> – Everything in Silver Exterior, plus plastic shine and headlight polish.</p>
 
       <h3>Add-Ons</h3>
       <p>Enhance your detail with optional add-on services to give your vehicle an extra touch of care.</p>
       <ul>
         <li>Seat Shampooing</li>
-        <li>Headlight Polish</li>
+        <li>Headlight Restoration</li>
         <li>Engine Bay Cleaning</li>
         <li>Plastic Restoration / Shine</li>
       </ul>
 
-      <p>Whether it’s one vehicle or a whole family fleet, select your vehicle type and the services you’d like. Once you’ve made your selections, submit the form and I’ll review your request and get back to you to finalize your appointment. </p>
-    
-      <p><em>Pricing for services and add-ons may depend on vehicle size — Sedan, Small SUV (2-row), or Large SUV / Van / Truck.</em></p>
+      <p>Whether it’s one vehicle or a whole family fleet, select your vehicle type and the packages you’d like. Once you’ve made your selections, submit the form and I’ll review your request and get back to you to finalize your appointment. </p>
+
+      <p><em>Pricing depends on vehicle size — Sedan, Small SUV (2-row), or Large SUV.</em></p>
 
     </section>
+    <!-- ===== END Pricing & Services copy ===== -->
 
     <form id="intake-form" method="POST" action="https://formspree.io/f/xvgqbqzl" class="form-card">
-      <input type="hidden" name="_redirect" value="https://lumego4.github.io/bryton-details.github.io/thank-you.html" />
+      <input type="hidden" name="_redirect" value="https://brytonsautodetailing.com/thank-you.html" />
       
     <h2 style="text-align: center;">Book Your Appointment</h2>
 
@@ -110,12 +116,13 @@
       <label for="email">Email:</label>
       <input id="email" name="email" type="email" required />
 
+    <!-- ===== BEGIN Service Estimator (Silver/Gold package rows; prices via data-price per size) ===== -->
     <table>
       <caption>Service Estimator</caption>
       <tr>
         <th></th>
         <th style="text-align:left;">Vehicle Type</th>
-        <th style="text-align:center;">Qty / Services</th>
+        <th style="text-align:center;">Qty / Packages</th>
       </tr>
 
       <!-- Sedan -->
@@ -127,45 +134,59 @@
         </td>
       </tr>
 
-      <!-- Sedan Interior -->
+      <!-- Sedan Silver Interior -->
       <tr class="service-row sedan-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="sedan-interior-check" name="sedan-interior-check" onchange="toggleServiceItem('sedan','interior')" style="margin-right:6px; position:relative; top:3px;" />
-            Interior ($75)
+            <input type="checkbox" id="sedan-silver-interior-check" name="sedan-silver-interior-check" data-price="100" onchange="toggleServiceItem('sedan','silver-interior')" style="margin-right:6px; position:relative; top:3px;" />
+            Silver Interior ($100)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="sedan-interior" name="sedan-interior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="sedan-silver-interior" name="sedan-silver-interior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Sedan Exterior -->
+      <!-- Sedan Gold Interior -->
       <tr class="service-row sedan-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="sedan-exterior-check" name="sedan-exterior-check" onchange="toggleServiceItem('sedan','exterior')" style="margin-right:6px; position:relative; top:3px;" />
-            Exterior ($50)
+            <input type="checkbox" id="sedan-gold-interior-check" name="sedan-gold-interior-check" data-price="125" onchange="toggleServiceItem('sedan','gold-interior')" style="margin-right:6px; position:relative; top:3px;" />
+            Gold Interior ($125)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="sedan-exterior" name="sedan-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="sedan-gold-interior" name="sedan-gold-interior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Sedan Interior/Exterior -->
+      <!-- Sedan Silver Exterior -->
       <tr class="service-row sedan-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="sedan-interiorexterior-check" name="sedan-interiorexterior-check" onchange="toggleServiceItem('sedan','interiorexterior')" style="margin-right:6px; position:relative; top:3px;" />
-            Interior & Exterior ($100)
+            <input type="checkbox" id="sedan-silver-exterior-check" name="sedan-silver-exterior-check" data-price="50" onchange="toggleServiceItem('sedan','silver-exterior')" style="margin-right:6px; position:relative; top:3px;" />
+            Silver Exterior ($50)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="sedan-interiorexterior" name="sedan-interiorexterior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="sedan-silver-exterior" name="sedan-silver-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
+        </td>
+      </tr>
+
+      <!-- Sedan Gold Exterior -->
+      <tr class="service-row sedan-service" style="display:none;">
+        <td></td>
+        <td style="white-space:nowrap;">
+          <label style="display:inline-flex; align-items:center;">
+            <input type="checkbox" id="sedan-gold-exterior-check" name="sedan-gold-exterior-check" data-price="75" onchange="toggleServiceItem('sedan','gold-exterior')" style="margin-right:6px; position:relative; top:3px;" />
+            Gold Exterior ($75)
+          </label>
+        </td>
+        <td style="text-align:center;">
+          <input type="number" id="sedan-gold-exterior" name="sedan-gold-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
@@ -178,102 +199,132 @@
         </td>
       </tr>
 
-      <!-- Small SUV Interior -->
+      <!-- Small SUV Silver Interior -->
       <tr class="service-row smallsuv-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="smallsuv-interior-check" name="smallsuv-interior-check" onchange="toggleServiceItem('smallsuv','interior')" style="margin-right:6px;" />
-            Interior ($100)
+            <input type="checkbox" id="smallsuv-silver-interior-check" name="smallsuv-silver-interior-check" data-price="125" onchange="toggleServiceItem('smallsuv','silver-interior')" style="margin-right:6px;" />
+            Silver Interior ($125)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="smallsuv-interior" name="smallsuv-interior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="smallsuv-silver-interior" name="smallsuv-silver-interior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Small SUV Exterior -->
+      <!-- Small SUV Gold Interior -->
       <tr class="service-row smallsuv-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="smallsuv-exterior-check" name="smallsuv-exterior-check" onchange="toggleServiceItem('smallsuv','exterior')" style="margin-right:6px;" />
-            Exterior ($75)
+            <input type="checkbox" id="smallsuv-gold-interior-check" name="smallsuv-gold-interior-check" data-price="150" onchange="toggleServiceItem('smallsuv','gold-interior')" style="margin-right:6px;" />
+            Gold Interior ($150)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="smallsuv-exterior" name="smallsuv-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="smallsuv-gold-interior" name="smallsuv-gold-interior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Small SUV Interior/Exterior -->
+      <!-- Small SUV Silver Exterior -->
       <tr class="service-row smallsuv-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="smallsuv-interiorexterior-check" name="smallsuv-interiorexterior-check" onchange="toggleServiceItem('smallsuv','interiorexterior')" style="margin-right:6px;" />
-            Interior & Exterior ($150)
+            <input type="checkbox" id="smallsuv-silver-exterior-check" name="smallsuv-silver-exterior-check" data-price="75" onchange="toggleServiceItem('smallsuv','silver-exterior')" style="margin-right:6px;" />
+            Silver Exterior ($75)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="smallsuv-interiorexterior" name="smallsuv-interiorexterior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="smallsuv-silver-exterior" name="smallsuv-silver-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Large SUV / Van / Truck -->
+      <!-- Small SUV Gold Exterior -->
+      <tr class="service-row smallsuv-service" style="display:none;">
+        <td></td>
+        <td style="white-space:nowrap;">
+          <label style="display:inline-flex; align-items:center;">
+            <input type="checkbox" id="smallsuv-gold-exterior-check" name="smallsuv-gold-exterior-check" data-price="100" onchange="toggleServiceItem('smallsuv','gold-exterior')" style="margin-right:6px;" />
+            Gold Exterior ($100)
+          </label>
+        </td>
+        <td style="text-align:center;">
+          <input type="number" id="smallsuv-gold-exterior" name="smallsuv-gold-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
+        </td>
+      </tr>
+
+      <!-- Large SUV -->
       <tr class="vehicle-row">
   <td><input type="checkbox" id="large-check" name="large-check" onchange="toggleServices('large')" /></td>
-        <td><label for="large-check">Large SUV / Van / Truck</label></td>
+        <td><label for="large-check">Large SUV</label></td>
         <td style="text-align:center;">
           <input type="number" id="large-qty" name="large-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator(); syncServiceQty('large')" />
         </td>
       </tr>
 
-      <!-- Large Interior -->
+      <!-- Large SUV Silver Interior -->
       <tr class="service-row large-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="large-interior-check" name="large-interior-check" onchange="toggleServiceItem('large','interior')" style="margin-right:6px;" />
-            Interior ($125)
+            <input type="checkbox" id="large-silver-interior-check" name="large-silver-interior-check" data-price="125" onchange="toggleServiceItem('large','silver-interior')" style="margin-right:6px;" />
+            Silver Interior ($125)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="large-interior" name="large-interior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="large-silver-interior" name="large-silver-interior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Large Exterior -->
+      <!-- Large SUV Gold Interior -->
       <tr class="service-row large-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="large-exterior-check" name="large-exterior-check" onchange="toggleServiceItem('large','exterior')" style="margin-right:6px;" />
-            Exterior ($100)
+            <input type="checkbox" id="large-gold-interior-check" name="large-gold-interior-check" data-price="175" onchange="toggleServiceItem('large','gold-interior')" style="margin-right:6px;" />
+            Gold Interior ($175)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="large-exterior" name="large-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="large-gold-interior" name="large-gold-interior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
-      <!-- Large Interior/Exterior -->
+      <!-- Large SUV Silver Exterior -->
       <tr class="service-row large-service" style="display:none;">
         <td></td>
         <td style="white-space:nowrap;">
           <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="large-interiorexterior-check" name="large-interiorexterior-check" onchange="toggleServiceItem('large','interiorexterior')" style="margin-right:6px;" />
-            Interior & Exterior ($200)
+            <input type="checkbox" id="large-silver-exterior-check" name="large-silver-exterior-check" data-price="100" onchange="toggleServiceItem('large','silver-exterior')" style="margin-right:6px;" />
+            Silver Exterior ($100)
           </label>
         </td>
         <td style="text-align:center;">
-          <input type="number" id="large-interiorexterior" name="large-interiorexterior" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="large-silver-exterior" name="large-silver-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
+        </td>
+      </tr>
+
+      <!-- Large SUV Gold Exterior -->
+      <tr class="service-row large-service" style="display:none;">
+        <td></td>
+        <td style="white-space:nowrap;">
+          <label style="display:inline-flex; align-items:center;">
+            <input type="checkbox" id="large-gold-exterior-check" name="large-gold-exterior-check" data-price="125" onchange="toggleServiceItem('large','gold-exterior')" style="margin-right:6px;" />
+            Gold Exterior ($125)
+          </label>
+        </td>
+        <td style="text-align:center;">
+          <input type="number" id="large-gold-exterior" name="large-gold-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
     </table>
+    <!-- ===== END Service Estimator ===== -->
 
     <div id="base-subtotal" style="text-align:center; font-weight:bold; margin: 1em 0;">Base Subtotal: $0</div>
 
+    <!-- ===== BEGIN Add-Ons (Seat Shampooing $75; Headlight Polish renamed to Headlight Restoration $50) ===== -->
     <table>
       <caption>Add-Ons</caption>
       <tr>
@@ -282,13 +333,13 @@
         <th style="text-align:center;">Qty</th>
       </tr>
       <tr>
-  <td><input type="checkbox" id="addon-shampoo-sedan-check" name="addon-shampoo-sedan-check" onchange="updateEstimator()" /></td>
-        <td><label for="addon-shampoo-sedan-check">Seat Shampooing ($50)</label></td>
+  <td><input type="checkbox" id="addon-shampoo-sedan-check" name="addon-shampoo-sedan-check" data-price="75" onchange="updateEstimator()" /></td>
+        <td><label for="addon-shampoo-sedan-check">Seat Shampooing ($75)</label></td>
   <td><input type="number" id="addon-shampoo-sedan-qty" name="addon-shampoo-sedan-qty" value="0" min="0" oninput="updateEstimator()" /></td>
       </tr>
       <tr>
-  <td><input type="checkbox" id="addon-headlight-check" name="addon-headlight-check" onchange="updateEstimator()" /></td>
-        <td><label for="addon-headlight-check">Headlight Polish ($25)</label></td>
+  <td><input type="checkbox" id="addon-headlight-check" name="addon-headlight-check" data-price="50" onchange="updateEstimator()" /></td>
+        <td><label for="addon-headlight-check">Headlight Restoration ($50)</label></td>
   <td><input type="number" id="addon-headlight-qty" name="addon-headlight-qty" value="0" min="0" oninput="updateEstimator()" /></td>
       </tr>
       <tr>
@@ -302,6 +353,7 @@
   <td><input type="number" id="addon-plastics-qty" name="addon-plastics-qty" value="0" min="0" oninput="updateEstimator()" /></td>
       </tr>
     </table>
+    <!-- ===== END Add-Ons ===== -->
 
     <div id="addon-subtotal" style="text-align:center; font-weight:bold; margin: 1em 0;">Add-On Subtotal: $0</div>
     <div id="estimate-result" style="text-align:center; font-weight:bold; margin: 1em 0;">Total: $0</div>

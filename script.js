@@ -1,11 +1,12 @@
 
 
 // Price maps used by estimator; prefer data-price attribute on elements if present.
+// NOTE: data-price on each package checkbox in index.html is the source of truth.
+// This map is only a fallback if a data-price attribute is missing.
 const BASE_PRICES = {
-  sedan: { interior: 75, exterior: 50, interiorexterior: 100 },
-  smallsuv: { interior: 100, exterior: 75, interiorexterior: 150 },
-  // NOTE: If you want a different bundle price, update here or add data-price on the checkbox.
-  large: { interior: 125, exterior: 100, interiorexterior: 200 }
+  sedan: { 'silver-interior': 100, 'gold-interior': 125, 'silver-exterior': 50, 'gold-exterior': 75 },
+  smallsuv: { 'silver-interior': 125, 'gold-interior': 150, 'silver-exterior': 75, 'gold-exterior': 100 },
+  large: { 'silver-interior': 125, 'gold-interior': 175, 'silver-exterior': 100, 'gold-exterior': 125 }
 };
 
 // Add-on prices keyed by the id middle segment after `addon-` in the HTML.
@@ -63,14 +64,15 @@ const VEHICLE_LABEL = {
 };
 
 const SERVICE_LABEL = {
-  interior: 'Interior',
-  exterior: 'Exterior',
-  interiorexterior: 'Interior & Exterior'
+  'silver-interior': 'Silver Interior',
+  'gold-interior': 'Gold Interior',
+  'silver-exterior': 'Silver Exterior',
+  'gold-exterior': 'Gold Exterior'
 };
 
 const ADDON_LABEL = {
   'shampoo-sedan': 'Seat Shampooing',
-  headlight: 'Headlight Polish',
+  headlight: 'Headlight Restoration',
   engine: 'Engine Bay Cleaning',
   plastics: 'Plastic Trim Shine'
 };
@@ -177,7 +179,7 @@ function toggleServiceItem(type, service) {
 function updateEstimator() {
   // Vehicle selectors
   const vehicleTypes = ['sedan', 'smallsuv', 'large'];
-  const services = ['interior', 'exterior', 'interiorexterior'];
+  const services = ['silver-interior', 'gold-interior', 'silver-exterior', 'gold-exterior'];
 
   // Enable/disable quantity inputs based on checkbox state (visual only)
   const sedanCheck = document.getElementById('sedan-check');
@@ -302,7 +304,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
   // Attach listeners per vehicle type and their services so syncing works
   const vehicleTypes = ['sedan', 'smallsuv', 'large'];
-  const services = ['interior', 'exterior', 'interiorexterior'];
+  const services = ['silver-interior', 'gold-interior', 'silver-exterior', 'gold-exterior'];
 
   vehicleTypes.forEach(type => {
     const typeCheck = document.getElementById(`${type}-check`);
