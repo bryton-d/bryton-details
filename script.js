@@ -4,16 +4,16 @@
 // NOTE: data-price on each package checkbox in index.html is the source of truth.
 // This map is only a fallback if a data-price attribute is missing.
 const BASE_PRICES = {
-  sedan: { 'silver-interior': 100, 'gold-interior': 125, 'silver-exterior': 50, 'gold-exterior': 75 },
-  smallsuv: { 'silver-interior': 125, 'gold-interior': 150, 'silver-exterior': 75, 'gold-exterior': 100 },
-  large: { 'silver-interior': 125, 'gold-interior': 175, 'silver-exterior': 100, 'gold-exterior': 125 }
+  sedan: { interior: 100, exterior: 50, combined: 125 },
+  smallsuv: { interior: 125, exterior: 75, combined: 175 },
+  large: { interior: 150, exterior: 100, combined: 225 }
 };
 
 // Add-on prices keyed by the id middle segment after `addon-` in the HTML.
 // These correspond to the current rows in index.html.
 const ADDON_PRICES = {
-  'shampoo-sedan': 50,     // Seat Shampooing ($50)
-  'headlight': 25,         // Headlight Polish ($25)
+  'shampoo-sedan': 75,     // Seat Shampooing ($75) — data-price in HTML is source of truth
+  'headlight': 50,         // Headlight Restoration ($50) — data-price in HTML is source of truth
   'engine': 25,            // Engine Bay Cleaning ($25)
   'plastics': 25           // Plastic Trim Shine ($25)
 };
@@ -59,15 +59,14 @@ function getAddonPrice(key) {
 // Human-friendly labels for summary
 const VEHICLE_LABEL = {
   sedan: 'Sedan',
-  smallsuv: 'Small SUV',
-  large: 'Large SUV/Van/Truck'
+  smallsuv: '2 Row SUV / Crossover',
+  large: '3 Row SUV / Van / Truck'
 };
 
 const SERVICE_LABEL = {
-  'silver-interior': 'Silver Interior',
-  'gold-interior': 'Gold Interior',
-  'silver-exterior': 'Silver Exterior',
-  'gold-exterior': 'Gold Exterior'
+  interior: 'Interior',
+  exterior: 'Exterior',
+  combined: 'Combined'
 };
 
 const ADDON_LABEL = {
@@ -165,6 +164,24 @@ function toggleServiceItem(type, service) {
   if (!input || !check) return;
   const vehicleQty = parseInt(qty) || 0;
   if (check.checked) {
+    // Mutual exclusivity: Interior, Exterior, and Combined cannot both/all be
+    // selected for the same vehicle. Selecting Combined clears Interior/Exterior;
+    // selecting Interior or Exterior clears Combined.
+    const conflicts = service === 'combined'
+      ? ['interior', 'exterior']
+      : ['combined'];
+    conflicts.forEach(other => {
+      const otherCheck = document.getElementById(`${type}-${other}-check`);
+      const otherInput = document.getElementById(`${type}-${other}`);
+      if (otherCheck && otherCheck.checked) {
+        otherCheck.checked = false;
+        if (otherInput) {
+          otherInput.disabled = true;
+          otherInput.value = 0;
+        }
+      }
+    });
+
     input.disabled = false;
     // if vehicle has a positive qty, initialize service qty to match it
     input.value = vehicleQty > 0 ? vehicleQty : 0;
@@ -179,7 +196,7 @@ function toggleServiceItem(type, service) {
 function updateEstimator() {
   // Vehicle selectors
   const vehicleTypes = ['sedan', 'smallsuv', 'large'];
-  const services = ['silver-interior', 'gold-interior', 'silver-exterior', 'gold-exterior'];
+  const services = ['interior', 'exterior', 'combined'];
 
   // Enable/disable quantity inputs based on checkbox state (visual only)
   const sedanCheck = document.getElementById('sedan-check');
@@ -304,7 +321,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
   // Attach listeners per vehicle type and their services so syncing works
   const vehicleTypes = ['sedan', 'smallsuv', 'large'];
-  const services = ['silver-interior', 'gold-interior', 'silver-exterior', 'gold-exterior'];
+  const services = ['interior', 'exterior', 'combined'];
 
   vehicleTypes.forEach(type => {
     const typeCheck = document.getElementById(`${type}-check`);
