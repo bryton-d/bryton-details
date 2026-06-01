@@ -116,6 +116,11 @@ section {
     height: 1.7em;
     min-width: 1.7em;
   }
+  /* Allow estimator service labels to wrap on mobile instead of forcing the row wider than the viewport.
+     !important is required to override the inline white-space:nowrap on these cells. */
+  .service-label-cell {
+    white-space: normal !important;
+  }
 }
 
 
