@@ -121,6 +121,14 @@ section {
   .service-label-cell {
     white-space: normal !important;
   }
+  .service-row td:last-child {
+    width: 70px;
+    padding-left: 8px;
+  }
+  .service-row td:last-child input[type="number"] {
+    max-width: 60px;
+    margin-bottom: 0;
+  }
 }
 
 
