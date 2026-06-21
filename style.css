@@ -1,263 +1,611 @@
-/* Base Styles */
+/* =====================================================================
+   Bryton's Auto Detailing — Design System (Phase 1A)
+   Black-led automotive theme: deep near-black surfaces, high-contrast
+   type, chrome accent, one light "paper" band for the booking form.
+
+   IMPORTANT: the estimator markup inside #intake-form (element IDs,
+   names, data-price attributes, table rows) is a contract with
+   script.js and Formspree. This stylesheet restyles those elements
+   but must never require markup changes inside the form.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. Tokens
+--------------------------------------------------------------------- */
+:root {
+  /* dark surfaces */
+  --ink-900: #0a0a0b;   /* page background */
+  --ink-800: #131316;   /* alternating bands */
+  --ink-700: #1c1c21;   /* cards on dark */
+  --line:    #2a2a30;   /* hairlines on dark */
+
+  /* light "paper" band (booking form) */
+  --paper:      #f7f7f5;
+  --paper-line: #e3e3df;
+  --paper-deep: #ffffff;
+
+  /* text */
+  --text-hi:      #f5f5f4;
+  --text-lo:      #a1a1aa;
+  --text-dark:    #16161a;
+  --text-dark-lo: #56565e;
+
+  /* accent: chrome/silver (single accent until logo art decides otherwise) */
+  --accent: #c9ccd1;
+
+  /* type */
+  --font-display: 'Archivo', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* shape & layout */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --header-h: 64px;
+  --content-w: 1080px;
+  --form-w: 640px;
+}
+
+/* ---------------------------------------------------------------------
+   2. Base / reset
+--------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background: #fff;
-  color: #111;
-  line-height: 1.6;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  background: var(--ink-900);
+  color: var(--text-hi);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+::selection { background: var(--accent); color: var(--ink-900); }
 
-/* Header */
-header, .site-header {
-  text-align: center;
-  padding: 40px 20px;
-  background: #000;
-  color: #fff;
+img { max-width: 100%; height: auto; }
+
+main { display: block; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-hi);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5em;
 }
 
-h2 {
-  text-align: center;
+p { margin: 0 0 1em; }
+
+a { color: var(--text-hi); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-/* Sections */
-section {
-  padding: 20px;
+/* uppercase micro-label used above headings */
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+  margin: 0 0 0.9em;
 }
 
-/* Header Structure */
+/* ---------------------------------------------------------------------
+   3. Header / navigation
+--------------------------------------------------------------------- */
 .site-header {
-  text-align: center;
-  margin-bottom: 1em;
-  padding: 40px 20px;
-  background: #004080;
-  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 11, 0.86);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
 }
 
-
-.site-title {
-  font-size: 2em;
-  font-style: italic;
-  font-weight: bold;
-  color: #fff;
+.header-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  height: var(--header-h);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.site-subtitle {
-  font-size: 1.1em;
-  margin: 0.5em 0 0.7em 0;
+/* Text wordmark — placeholder slot for the logo <img> when assets arrive */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.02rem;
+  letter-spacing: 0.14em;
+  color: var(--text-hi);
+  white-space: nowrap;
+  text-decoration: none;
 }
-
+.wordmark span { color: var(--text-lo); font-weight: 600; }
+.wordmark:hover { text-decoration: none; }
 
 .site-nav {
-  margin: 0.7em 0 0.5em 0;
   display: flex;
-  justify-content: center;
-  gap: 1.5em;
   align-items: center;
-  flex-wrap: wrap;
-  overflow-x: auto;
+  gap: 6px;
 }
 
 .site-nav a {
-  color: #fff;
-  text-decoration: underline;
+  font-size: 0.92rem;
   font-weight: 500;
-  font-size: 1.05em;
-  padding: 0.2em 0.7em;
-  border-radius: 5px;
-  background: transparent;
-  transition: outline 0.2s, background 0.2s;
-  outline: none;
-}
-
-.site-nav a.active {
-  font-weight: 700;
-  text-decoration: underline;
-  background: #222;
-}
-
-.site-nav a:focus {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-  background: #222;
-}
-
-.site-nav a:hover {
-  background: #222;
-  text-decoration: underline;
-}
-
-.site-nav img {
-  height: 2em;
+  color: var(--text-lo);
+  padding: 8px 12px;
   border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-  vertical-align: middle;
-  background: #fff;
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
+.site-nav a:hover { color: var(--text-hi); text-decoration: none; }
+
+.site-nav a.active,
+.site-nav a[aria-current="page"] {
+  color: var(--text-hi);
+  background: var(--ink-700);
+}
+
+.site-nav .nav-instagram {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 10px;
+}
+.site-nav .nav-instagram img {
+  height: 20px;
+  width: 20px;
+  border-radius: 4px;
+  display: block;
+}
+
+.site-nav .nav-cta {
+  background: var(--text-hi);
+  color: var(--ink-900);
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  margin-left: 6px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.site-nav .nav-cta:hover {
+  background: #ffffff;
+  color: var(--ink-900);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* Hamburger (mobile only) */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: var(--text-hi);
+  border-radius: 2px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 767px) {
+  .nav-toggle { display: flex; }
+
+  .site-nav {
+    position: absolute;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px 16px 18px;
+    background: rgba(10, 10, 11, 0.97);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-nav.open { display: flex; }
+
+  .site-nav a {
+    padding: 13px 12px;
+    font-size: 1rem;
+  }
+  .site-nav .nav-cta {
+    margin: 8px 0 0;
+    text-align: center;
+  }
+  .site-nav .nav-instagram { justify-content: flex-start; }
+}
+
+/* ---------------------------------------------------------------------
+   4. Hero (homepage)
+--------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: min(82vh, 760px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  z-index: -2;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg,
+      rgba(10, 10, 11, 0.62) 0%,
+      rgba(10, 10, 11, 0.30) 38%,
+      rgba(10, 10, 11, 0.55) 68%,
+      rgba(10, 10, 11, 0.97) 100%);
+}
+
+.hero-content {
+  width: 100%;
+  max-width: var(--content-w);
+  margin: 0 auto;
+  padding: 140px 20px 72px;
+}
+
+.hero-kicker {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.1em;
+}
+
+.hero h1 {
+  font-size: clamp(2.3rem, 5.6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  max-width: 14ch;
+  margin-bottom: 0.4em;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  color: var(--text-lo);
+  max-width: 54ch;
+  margin-bottom: 1.8em;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.6em;
+}
+
+.hero-trust {
+  font-size: 0.85rem;
+  color: var(--text-lo);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
 
 @media (max-width: 600px) {
-  .site-nav {
-    gap: 0.5em;
-    padding: 0.5em 0.2em;
-    font-size: 0.98em;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .site-nav a,
-  .site-nav img {
-    font-size: 0.98em;
-    padding: 0.2em 0.5em;
-    margin: 0.1em 0.1em;
-  }
-  .site-nav img {
-    height: 1.7em;
-    min-width: 1.7em;
-  }
-  /* Allow estimator service labels to wrap on mobile instead of forcing the row wider than the viewport.
-     !important is required to override the inline white-space:nowrap on these cells. */
-  .service-label-cell {
-    white-space: normal !important;
-  }
-  .service-row td:last-child {
-    width: 70px;
-    padding-left: 8px;
-  }
-  .service-row td:last-child input[type="number"] {
-    max-width: 60px;
-    margin-bottom: 0;
-  }
+  .hero { min-height: 74vh; }
+  .hero-content { padding: 110px 20px 56px; }
+  .hero-actions .btn { width: 100%; text-align: center; }
 }
 
+/* ---------------------------------------------------------------------
+   5. Buttons
+--------------------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
 
-/* Form */
-form {
-  background: #fff;
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-width: 600px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  color: #111;
+.btn-primary {
+  background: var(--text-hi);
+  color: var(--ink-900);
+}
+.btn-primary:hover { background: #ffffff; color: var(--ink-900); }
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-hi);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.btn-ghost:hover { border-color: rgba(255, 255, 255, 0.6); color: var(--text-hi); }
+
+/* ---------------------------------------------------------------------
+   6. Page sections (dark)
+--------------------------------------------------------------------- */
+section { padding: 0; }
+
+.page-title {
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  font-weight: 800;
+  text-align: center;
+  margin: 2.2em auto 0.4em;
+  max-width: var(--content-w);
+  padding: 0 20px;
 }
 
+/* Pricing & services copy block (homepage, outside the form) */
+.pricing-section {
+  max-width: 760px;
+  margin: 72px auto 56px;
+  padding: 0 24px;
+}
+
+.pricing-section h2 {
+  font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+  font-weight: 800;
+  margin-bottom: 1em;
+}
+
+.pricing-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-hi);
+  border-top: 1px solid var(--line);
+  padding-top: 1.5em;
+  margin: 1.8em 0 0.5em;
+}
+
+.pricing-section p,
+.pricing-section li {
+  color: var(--text-lo);
+  font-size: 1rem;
+}
+
+.pricing-section ul {
+  margin: 0.4em 0 1em;
+  padding-left: 1.2em;
+}
+
+.pricing-section em { color: var(--accent); font-style: normal; }
+
+/* ---------------------------------------------------------------------
+   7. Booking form — the light "paper" card
+   (Markup inside #intake-form is untouchable; style by existing
+   ids/classes/elements only.)
+--------------------------------------------------------------------- */
+#intake-form { scroll-margin-top: calc(var(--header-h) + 16px); }
+
+.form-card {
+  max-width: var(--form-w);
+  background: var(--paper);
+  color: var(--text-dark);
+  margin: 0 auto 72px;
+  padding: 36px 32px;
+  border-radius: var(--radius);
+  border: 1px solid var(--paper-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+.form-card h2 {
+  color: var(--text-dark);
+  font-size: 1.55rem;
+  font-weight: 800;
+  margin-bottom: 1.1em;
+}
+
+.form-card label {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+/* Inputs (light card context) */
 input, select, textarea {
   width: 100%;
-  margin-bottom: 15px;
-  padding: 8px;
-  border: 1px solid #333;
-  border-radius: 4px;
+  margin-bottom: 16px;
+  padding: 11px 12px;
+  border: 1px solid #cfcfca;
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
-  background-color: #fff;
-  color: #111;
-  font-size: 1rem;
-  transition: border 0.2s, box-shadow 0.2s;
+  background-color: var(--paper-deep);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  font-size: 16px; /* prevents iOS zoom-on-focus */
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:disabled {
-  background-color: #f4f4f4;
-  color: #888;
+  background-color: #ececea;
+  color: #9a9a96;
 }
 
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-  border-color: #000;
-  box-shadow: 0 0 0 2px #ccc;
-}
-
-label {
-  font-weight: 600;
-  margin-bottom: 5px;
-  display: inline-block;
-  color: #111;
-}
-
-
-/* Buttons */
-button {
-  background: #000;
-  color: #fff;
-  padding: 12px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s, outline 0.2s;
   outline: none;
+  border-color: var(--text-dark);
+  box-shadow: 0 0 0 3px rgba(22, 22, 26, 0.12);
 }
 
+textarea { min-height: 96px; resize: vertical; }
+
+/* Checkboxes (moved from the old index.html inline styles; accent
+   changed from #004080 blue to black for the new theme) */
+input[type="checkbox"] {
+  transition: opacity 120ms ease, transform 120ms ease, filter 120ms ease;
+  vertical-align: middle;
+  margin-right: 6px;
+  cursor: pointer;
+  accent-color: var(--text-dark);
+}
+input[type="checkbox"]:not(:checked) {
+  opacity: 0.45;
+  filter: grayscale(60%);
+}
+input[type="checkbox"]:checked {
+  opacity: 1;
+  filter: none;
+}
+input[type="checkbox"]:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed;
+  filter: grayscale(80%);
+}
+
+input[type="number"][disabled] { background: #ececea; }
+input[type="number"]:not([disabled]) { background: var(--paper-deep); }
+
+/* Submit (and generic) button */
+button {
+  width: 100%;
+  background: var(--ink-900);
+  color: var(--text-hi);
+  padding: 15px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+button:hover { background: #26262c; transform: translateY(-1px); }
 button:focus {
-  outline: 2px solid #000;
+  outline: 2px solid var(--text-dark);
   outline-offset: 2px;
-  background: #333;
 }
 
-button:hover {
-  background: #333;
-  color: #fff;
-  text-decoration: underline;
-}
-
-
-/* Table (Vehicle Selector) */
+/* ---------------------------------------------------------------------
+   8. Estimator tables (cosmetic only — structure is script.js contract)
+--------------------------------------------------------------------- */
 table {
   width: 100%;
-  max-width: 600px;
+  max-width: var(--form-w);
   margin: auto;
   border-collapse: separate;
-  border-spacing: 0 0.5em;
-  background: #fff;
-  color: #111;
-}
-
-/* Vertically center table cells */
-table td, table th {
-  vertical-align: middle;
-  padding: 0.5em 0.5em;
-}
-
-table th:first-child,
-table td:first-child {
-  width: 40px;
-}
-
-table th:last-child,
-table td:last-child {
-  width: 80px;
-}
-
-table input[type="checkbox"] {
-  vertical-align: middle;
-  accent-color: #000;
-  transform: translateY(-2px);
-}
-
-table input[type="checkbox"]:focus {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
-
-table input[type="number"] {
-  width: 60px;
-  text-align: center;
-  margin: 0 auto;
-  display: block;
-  color: #111;
-  background: #fff;
-  border: 1px solid #333;
+  border-spacing: 0 6px;
+  background: transparent;
+  color: var(--text-dark);
 }
 
 caption {
   caption-side: top;
-  font-weight: bold;
-  font-size: 1.1em;
-  margin-bottom: 0.5em;
-  color: #111;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dark-lo);
+  text-align: left;
+  margin: 14px 0 6px;
+}
+
+table th {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dark-lo);
+  padding: 0 8px 2px;
+}
+
+table td {
+  vertical-align: middle;
+  padding: 10px 8px;
+  background: var(--paper-deep);
+  border-top: 1px solid var(--paper-line);
+  border-bottom: 1px solid var(--paper-line);
+}
+table td:first-child {
+  border-left: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+table td:last-child {
+  border-right: 1px solid var(--paper-line);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+table th:first-child, table td:first-child { width: 40px; }
+table th:last-child, table td:last-child { width: 84px; }
+
+/* Vehicle rows read slightly stronger than their service sub-rows */
+tr.vehicle-row td { background: var(--paper-deep); }
+tr.vehicle-row label { font-weight: 600; }
+
+tr.service-row td {
+  background: #fbfbf9;
+  font-size: 0.95rem;
+}
+tr.service-row label { font-weight: 500; }
+
+table input[type="checkbox"] {
+  vertical-align: middle;
+  accent-color: var(--text-dark);
+  transform: translateY(-2px);
+}
+table input[type="checkbox"]:focus {
+  outline: 2px solid var(--text-dark);
+  outline-offset: 2px;
+}
+
+table input[type="number"] {
+  width: 62px;
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+  color: var(--text-dark);
+  background: var(--paper-deep);
+  border: 1px solid #cfcfca;
+  padding: 8px 6px;
+  margin-bottom: 0;
 }
 
 td input[type="checkbox"] {
@@ -265,70 +613,215 @@ td input[type="checkbox"] {
   transform: translateY(4.5px);
 }
 
+/* Subtotals & total */
+#base-subtotal,
+#addon-subtotal {
+  color: var(--text-dark-lo);
+  font-size: 0.95rem;
+}
 
-/* Estimate Result Box */
 #estimate-result {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dark);
+  border-top: 1px solid var(--paper-line);
+  padding-top: 16px;
+  margin-bottom: 1.2em;
+}
+
+#confirmation { color: var(--text-lo); }
+
+/* ---------------------------------------------------------------------
+   9. About page
+--------------------------------------------------------------------- */
+.about-container {
+  max-width: 760px;
+  margin: 1.5em auto 4em;
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2.2em 2em;
   text-align: center;
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #111;
-  margin-bottom: 1.5em;
 }
 
+.about-story {
+  font-size: 1.08rem;
+  color: var(--text-lo);
+  text-align: left;
+  max-width: 58ch;
+  margin: 0 auto 2em;
+}
 
-/* Footer */
-footer {
+.about-story p { margin-bottom: 1.1em; }
+.about-story strong { color: var(--text-hi); }
+.about-story a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+.about-photos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2em;
+  margin-top: 1.5em;
+}
+
+.about-photos img {
+  max-width: 240px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 700px) {
+  .about-container { padding: 1.6em 1.1em; margin-left: 16px; margin-right: 16px; }
+  .about-photos { flex-direction: column; align-items: center; }
+  .about-photos img { max-width: 100%; }
+}
+
+/* ---------------------------------------------------------------------
+   10. Testimonials page
+--------------------------------------------------------------------- */
+.testimonial-block {
+  margin: 1.6em auto;
+  max-width: 640px;
+  padding: 1.8em 1.8em 1.5em;
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-align: left;
+}
+
+.testimonial-text {
+  font-size: 1.06rem;
+  color: var(--text-hi);
+  margin-bottom: 1em;
+}
+
+.testimonial-text::before {
+  content: "\201C";
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 0.6;
+  color: var(--accent);
+  margin-bottom: 0.35em;
+}
+
+.testimonial-author {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+}
+
+@media (max-width: 700px) {
+  .testimonial-block { margin-left: 16px; margin-right: 16px; }
+}
+
+/* ---------------------------------------------------------------------
+   11. Instagram posts page
+--------------------------------------------------------------------- */
+.ig-embed-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5em auto 4em;
+  max-width: 560px;
+  padding: 0 16px;
+}
+
+.ig-embed-container blockquote { margin-bottom: 2em; }
+
+/* ---------------------------------------------------------------------
+   12. Thank-you page
+--------------------------------------------------------------------- */
+.thanks-card {
+  max-width: 560px;
+  margin: 12vh auto 4em;
+  padding: 3em 2.2em;
+  background: var(--ink-800);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   text-align: center;
-  padding: 20px;
-  background: #000;
-  color: #fff;
-  font-size: 14px;
 }
 
-footer a, footer a:visited, footer a:active {
-  color: #fff !important;
-  text-decoration: underline;
-  word-break: break-all;
+.thanks-card h1 {
+  font-size: 2rem;
+  font-weight: 800;
 }
 
-/* Utility: Gray backgrounds for blocks */
-.gray-bg {
-  background: #f4f4f4;
-  color: #111;
+.thanks-card p { color: var(--text-lo); margin-bottom: 2em; }
+
+@media (max-width: 700px) {
+  .thanks-card { margin: 8vh 16px 3em; }
 }
 
-/* Utility: White background for main content blocks */
-.white-bg {
-  background: #fff;
-  color: #111;
+/* ---------------------------------------------------------------------
+   13. Footer
+--------------------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  background: var(--ink-900);
+  padding: 44px 20px 40px;
+  text-align: center;
 }
 
-/* Utility: Black background for header/footer */
-.black-bg {
-  background: #000;
-  color: #fff;
+.footer-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  color: var(--text-hi);
+  margin-bottom: 0.6em;
+}
+.footer-brand span { color: var(--text-lo); font-weight: 600; }
+
+.footer-meta {
+  color: var(--text-lo);
+  font-size: 0.9rem;
+  margin-bottom: 0.4em;
 }
 
-/* Utility: For blocks with subtle border */
-.bordered {
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.footer-contact {
+  font-size: 0.9rem;
+  color: var(--text-lo);
+  margin: 0;
+}
+.footer-contact a {
+  color: var(--text-hi);
+  text-decoration: none;
+}
+.footer-contact a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------------------------------------------------------------------
+   14. Mobile refinements for the estimator (kept from previous CSS)
+--------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  .form-card { padding: 26px 16px; margin-left: 12px; margin-right: 12px; }
+
+  /* Allow estimator service labels to wrap on mobile instead of forcing
+     the row wider than the viewport. !important is required to override
+     the inline white-space:nowrap on these cells. */
+  .service-label-cell { white-space: normal !important; }
+
+  .service-row td:last-child { width: 70px; padding-left: 8px; }
+  .service-row td:last-child input[type="number"] {
+    max-width: 60px;
+    margin-bottom: 0;
+  }
+
+  table td { padding: 10px 6px; }
 }
 
-/* Focus visible for all interactive elements */
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2.5px solid #000;
-  outline-offset: 2px;
-}
-
-/* Ensure link hover/focus is visible and not color-only */
-a:hover, a:focus {
-  text-decoration: underline;
-  background: #222;
-  color: #fff !important;
-}
-
-/* For accessibility: never use light gray for text on white */
-.light-text {
-  color: #888;
+/* ---------------------------------------------------------------------
+   15. Motion preferences
+--------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

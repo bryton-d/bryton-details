@@ -3,80 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bryton's Auto Detailing</title>
+  <title>Bryton's Auto Detailing | Mobile Detailing in Delaware &amp; Montgomery County, PA</title>
+  <meta name="description" content="Owner-operated mobile auto detailing serving Delaware & Montgomery County, PA. Interior, exterior, and combined details at your home — build your estimate online and book in minutes." />
+  <link rel="canonical" href="https://brytonsautodetailing.com/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Bryton's Auto Detailing — Mobile Detailing That Comes to You" />
+  <meta property="og:description" content="Interior, exterior, and combined detailing at your home or office in Delaware & Montgomery County, PA. Build your estimate online." />
+  <meta property="og:url" content="https://brytonsautodetailing.com/" />
+  <meta property="og:image" content="https://brytonsautodetailing.com/images/og-image.jpg" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0b'/%3E%3Ctext x='32' y='45' font-family='Arial,Helvetica,sans-serif' font-size='38' font-weight='800' fill='%23f5f5f4' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .page-title {
-      font-size: 2em;
-      font-weight: bold;
-      text-align: center;
-      margin: 1.5em 0;
-      color: #004080;
-    }
 
-    .form-card {
-      max-width: 600px;
-      background: #ffffff;
-      margin: 2em auto;
-      padding: 2em;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    }
-
-    /* checkbox visual rules (more explicit & robust) */
-    input[type="checkbox"] {
-      transition: opacity 120ms ease, transform 120ms ease, filter 120ms ease;
-      vertical-align: middle;
-      margin-right: 6px;
-      cursor: pointer;
-      accent-color: #004080; /* keeps color consistent in modern browsers */
-    }
-
-    /* explicitly dim unchecked checkboxes */
-    input[type="checkbox"]:not(:checked) {
-      opacity: 0.45;
-      filter: grayscale(60%);
-    }
-
-    /* full-strength when checked */
-    input[type="checkbox"]:checked {
-      opacity: 1;
-      filter: none;
-    }
-
-    /* disabled state — clearly dim and unclickable */
-    input[type="checkbox"]:disabled {
-      opacity: 0.35 !important;
-      cursor: not-allowed;
-      filter: grayscale(80%);
-    }
-
-    /* optional: make service number inputs visibly disabled/enabled */
-    input[type="number"][disabled] {
-      background: #eee;
-    }
-    input[type="number"]:not([disabled]) {
-      background: #fff;
-    }
-  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Bryton's Auto Detailing",
+    "description": "Owner-operated mobile auto detailing serving Delaware & Montgomery County, PA.",
+    "url": "https://brytonsautodetailing.com/",
+    "telephone": "+1-484-942-8485",
+    "email": "bryton.d.henry@gmail.com",
+    "image": "https://brytonsautodetailing.com/images/og-image.jpg",
+    "areaServed": ["Delaware County, PA", "Montgomery County, PA"],
+    "sameAs": ["https://www.instagram.com/brytons_auto_detailing/"]
+  }
+  </script>
 </head>
 <body>
-  <header class="site-header black-bg">
-    <div class="site-title">Bryton's Auto Detailing</div>
-    <nav class="site-nav" aria-label="Main navigation">
-      <a href="index.html" class="active" aria-current="page">Home</a>
-      <a href="about.html">About</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="ig-posts.html">Posts</a>
-      <a href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener" title="Instagram">
-        <img src="images/instagram.svg" alt="Instagram social media icon" />
-      </a>
-    </nav>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="wordmark" aria-label="Bryton's Auto Detailing — Home">BRYTON'S<span>&nbsp;AUTO DETAILING</span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html" class="active" aria-current="page">Home</a>
+        <a href="about.html">About</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="ig-posts.html">Posts</a>
+        <a class="nav-instagram" href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener" title="Instagram">
+          <img src="images/instagram.svg" alt="Instagram" />
+        </a>
+        <a class="nav-cta" href="#intake-form">Get an Estimate</a>
+      </nav>
+    </div>
   </header>
 
   <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <img class="hero-bg" src="images/car.webp" alt="Freshly detailed black Ford Focus ST" fetchpriority="high" width="1280" height="1732" />
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="hero-kicker">Delaware &amp; Montgomery County, PA</p>
+        <h1>Mobile detailing that comes to you.</h1>
+        <p class="hero-sub">Interior and exterior detailing at your home or office — owner-operated, by appointment. Build your estimate below and Bryton will confirm your booking personally.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#intake-form">Get an instant estimate</a>
+          <a class="btn btn-ghost" href="tel:+14849428485">Call 484-942-8485</a>
+        </div>
+        <p class="hero-trust">Owner-operated &nbsp;·&nbsp; Serving Delco &amp; Montco &nbsp;·&nbsp; Personal reply to every request</p>
+      </div>
+    </section>
+
     <!-- ===== BEGIN Pricing & Services copy (base-service model: Interior / Exterior / Combined) ===== -->
-    <section class="pricing-section white-bg bordered" style="max-width: 800px; margin: 2em auto; padding: 1.5em; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+    <section class="pricing-section">
       <h2 style="text-align: center;">Pricing &amp; Services</h2>
 
       <p>Your vehicle deserves the right level of care, inside and out. Choose an interior detail, an exterior detail, or a combined detail, with pricing based on your vehicle size. Want to go further? Add optional add-on services for an extra level of care.</p>
@@ -328,10 +326,17 @@
 
   </main>
 
-  <footer class="black-bg">
-    <p>Contact: 484-942-8485 | bryton.d.henry@gmail.com</p>
+  <footer class="site-footer">
+    <div class="footer-brand">BRYTON'S<span>&nbsp;AUTO DETAILING</span></div>
+    <p class="footer-meta">Mobile auto detailing · Delaware &amp; Montgomery County, PA</p>
+    <p class="footer-contact">
+      <a href="tel:+14849428485">484-942-8485</a> &nbsp;·&nbsp;
+      <a href="mailto:bryton.d.henry@gmail.com">bryton.d.henry@gmail.com</a> &nbsp;·&nbsp;
+      <a href="https://www.instagram.com/brytons_auto_detailing/" target="_blank" rel="noopener">Instagram</a>
+    </p>
   </footer>
 
   <script src="script.js"></script>
+  <script src="nav.js"></script>
 </body>
 </html>

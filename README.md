@@ -40,12 +40,16 @@ deployment branch publishes the site.
 
 ## Current status
 
-**Phase 1 — Package-model update (completed and live):**
+**Service model (live):** base services — **Interior**, **Exterior**, and **Combined**
+— priced across three vehicle classes (**Sedan**, **2 Row SUV / Crossover**, and
+**3 Row SUV / Van / Truck**) via `data-price` attributes in `index.html`, plus four
+add-ons (Seat Shampooing, Headlight Restoration, Engine Bay Cleaning, Plastic Trim
+Shine). *(Earlier notes describing a "Silver/Gold package" migration were inaccurate;
+that model is not in the code.)*
 
-- Migrated to **Silver / Gold Interior** and **Silver / Gold Exterior** packages.
-- Pricing organized across three vehicle classes: **Sedan**, **Small SUV**, and
-  **Large SUV**.
-- Estimator updated to reflect the new package pricing model.
-- Add-on labels and prices updated.
+**Phase 1A — Visual redesign (this change):** black-led design system in `style.css`,
+sticky header with text wordmark, homepage hero, restyled estimator (cosmetic only —
+markup/logic untouched), optimized WebP images, basic SEO metadata, and a shared
+`nav.js` for the mobile menu.
 
 See [roadmap.md](roadmap.md) for project state and planned next steps.
