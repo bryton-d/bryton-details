@@ -73,20 +73,22 @@
       </div>
     </section>
 
-    <!-- ===== BEGIN Pricing & Services copy (base-service model: Interior / Exterior / Combined) ===== -->
+    <!-- ===== BEGIN Pricing & Services copy (single full-detail price per vehicle class) ===== -->
     <section class="pricing-section">
       <h2 style="text-align: center;">Pricing &amp; Services</h2>
 
-      <p>Your vehicle deserves the right level of care, inside and out. Choose an interior detail, an exterior detail, or a combined detail, with pricing based on your vehicle size. Want to go further? Add optional add-on services for an extra level of care.</p>
+      <p>Your vehicle gets our complete full-detail treatment, inside and out, at one simple price based on its size.</p>
 
-      <h3>Interior Detail</h3>
-      <p>Blow out, full vacuum, clean all touch points, window cleaning, plastic shine/protection, and carpet cleaning.</p>
+      <h3>What’s Included in Every Full Detail</h3>
+      <p><strong>Interior:</strong> blow out, full vacuum, clean all touch points, window cleaning, plastic shine/protection, and carpet cleaning.</p>
+      <p><strong>Exterior:</strong> hand wash, hand dry, window cleaning, tire shine, wheel detailing, and a ceramic spray for lasting paint protection.</p>
 
-      <h3>Exterior Detail</h3>
-      <p>Hand wash, hand dry, window cleaning, tire shine, wheel detailing, and a ceramic spray for lasting paint protection.</p>
-
-      <h3>Combined Detail</h3>
-      <p>The full interior and exterior detail together at a combined price.</p>
+      <h3>Full-Detail Pricing</h3>
+      <ul>
+        <li>Sedan &mdash; $150</li>
+        <li>2 Row SUV / Crossover &mdash; $200</li>
+        <li>3 Row SUV / Van / Truck &mdash; $250</li>
+      </ul>
 
       <h3>Add-Ons</h3>
       <p>Enhance your detail with optional add-on services to give your vehicle an extra touch of care.</p>
@@ -97,9 +99,9 @@
         <li>Plastic Restoration / Shine</li>
       </ul>
 
-      <p>Whether it’s one vehicle or a whole family fleet, select your vehicle type and the services you’d like. Once you’ve made your selections, submit the form and I’ll review your request and get back to you to finalize your appointment. </p>
+      <p>Whether it’s one vehicle or a whole family fleet, select your vehicle type and add any extras you’d like. Once you’ve made your selections, submit the form and I’ll review your request and get back to you to finalize your appointment.</p>
 
-      <p><em>Pricing depends on vehicle size — Sedan, 2 Row SUV / Crossover, or 3 Row SUV / Van / Truck.</em></p>
+      <p><em>Pricing is a single full-detail rate per vehicle size — Sedan, 2 Row SUV / Crossover, or 3 Row SUV / Van / Truck.</em></p>
 
     </section>
     <!-- ===== END Pricing & Services copy ===== -->
@@ -115,171 +117,45 @@
       <label for="email">Email:</label>
       <input id="email" name="email" type="email" required />
 
-    <!-- ===== BEGIN Service Estimator (base-service rows: Interior / Exterior / Combined; prices via data-price per size) ===== -->
+    <!-- ===== BEGIN Service Estimator (single full-detail price per vehicle class) ===== -->
     <table>
-      <caption>Service Estimator</caption>
+      <caption>Service Estimator &mdash; Full Detail</caption>
       <tr>
         <th></th>
-        <th style="text-align:left;">Vehicle Type</th>
-        <th style="text-align:center;">Qty / Services</th>
+        <th style="text-align:left;">Vehicle Type (Full Detail)</th>
+        <th style="text-align:center;">Qty</th>
       </tr>
 
       <!-- Sedan -->
       <tr class="vehicle-row">
-  <td><input type="checkbox" id="sedan-check" name="sedan-check" onchange="toggleServices('sedan')" /></td>
-        <td><label for="sedan-check">Sedan</label></td>
+        <td><input type="checkbox" id="sedan-check" name="sedan-check" data-price="150" onchange="toggleVehicle('sedan')" /></td>
+        <td><label for="sedan-check">Sedan &mdash; $150</label></td>
         <td style="text-align:center;">
-          <input type="number" id="sedan-qty" name="sedan-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator(); syncServiceQty('sedan')" />
-        </td>
-      </tr>
-
-      <!-- Sedan Interior -->
-      <tr class="service-row sedan-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="sedan-interior-check" name="sedan-interior-check" data-price="100" onchange="toggleServiceItem('sedan','interior')" style="margin-right:6px; position:relative; top:3px;" />
-            Interior ($100)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="sedan-interior" name="sedan-interior" value="0" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- Sedan Exterior -->
-      <tr class="service-row sedan-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="sedan-exterior-check" name="sedan-exterior-check" data-price="50" onchange="toggleServiceItem('sedan','exterior')" style="margin-right:6px; position:relative; top:3px;" />
-            Exterior ($50)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="sedan-exterior" name="sedan-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- Sedan Combined -->
-      <tr class="service-row sedan-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="sedan-combined-check" name="sedan-combined-check" data-price="125" onchange="toggleServiceItem('sedan','combined')" style="margin-right:6px; position:relative; top:3px;" />
-            Combined ($125)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="sedan-combined" name="sedan-combined" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="sedan-qty" name="sedan-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
       <!-- 2 Row SUV / Crossover -->
       <tr class="vehicle-row">
-  <td><input type="checkbox" id="smallsuv-check" name="smallsuv-check" onchange="toggleServices('smallsuv')" /></td>
-        <td><label for="smallsuv-check">2 Row SUV / Crossover</label></td>
+        <td><input type="checkbox" id="smallsuv-check" name="smallsuv-check" data-price="200" onchange="toggleVehicle('smallsuv')" /></td>
+        <td><label for="smallsuv-check">2 Row SUV / Crossover &mdash; $200</label></td>
         <td style="text-align:center;">
-          <input type="number" id="smallsuv-qty" name="smallsuv-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator(); syncServiceQty('smallsuv')" />
-        </td>
-      </tr>
-
-      <!-- 2 Row SUV / Crossover Interior -->
-      <tr class="service-row smallsuv-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="smallsuv-interior-check" name="smallsuv-interior-check" data-price="125" onchange="toggleServiceItem('smallsuv','interior')" style="margin-right:6px;" />
-            Interior ($125)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="smallsuv-interior" name="smallsuv-interior" value="0" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- 2 Row SUV / Crossover Exterior -->
-      <tr class="service-row smallsuv-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="smallsuv-exterior-check" name="smallsuv-exterior-check" data-price="75" onchange="toggleServiceItem('smallsuv','exterior')" style="margin-right:6px;" />
-            Exterior ($75)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="smallsuv-exterior" name="smallsuv-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- 2 Row SUV / Crossover Combined -->
-      <tr class="service-row smallsuv-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="smallsuv-combined-check" name="smallsuv-combined-check" data-price="175" onchange="toggleServiceItem('smallsuv','combined')" style="margin-right:6px;" />
-            Combined ($175)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="smallsuv-combined" name="smallsuv-combined" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="smallsuv-qty" name="smallsuv-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
 
       <!-- 3 Row SUV / Van / Truck -->
       <tr class="vehicle-row">
-  <td><input type="checkbox" id="large-check" name="large-check" onchange="toggleServices('large')" /></td>
-        <td><label for="large-check">3 Row SUV / Van / Truck</label></td>
+        <td><input type="checkbox" id="large-check" name="large-check" data-price="250" onchange="toggleVehicle('large')" /></td>
+        <td><label for="large-check">3 Row SUV / Van / Truck &mdash; $250</label></td>
         <td style="text-align:center;">
-          <input type="number" id="large-qty" name="large-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator(); syncServiceQty('large')" />
-        </td>
-      </tr>
-
-      <!-- 3 Row SUV / Van / Truck Interior -->
-      <tr class="service-row large-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="large-interior-check" name="large-interior-check" data-price="150" onchange="toggleServiceItem('large','interior')" style="margin-right:6px;" />
-            Interior ($150)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="large-interior" name="large-interior" value="0" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- 3 Row SUV / Van / Truck Exterior -->
-      <tr class="service-row large-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="large-exterior-check" name="large-exterior-check" data-price="100" onchange="toggleServiceItem('large','exterior')" style="margin-right:6px;" />
-            Exterior ($100)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="large-exterior" name="large-exterior" value="0" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- 3 Row SUV / Van / Truck Combined -->
-      <tr class="service-row large-service" style="display:none;">
-        <td></td>
-        <td class="service-label-cell" style="white-space:nowrap;">
-          <label style="display:inline-flex; align-items:center;">
-            <input type="checkbox" id="large-combined-check" name="large-combined-check" data-price="225" onchange="toggleServiceItem('large','combined')" style="margin-right:6px;" />
-            Combined ($225)
-          </label>
-        </td>
-        <td style="text-align:center;">
-          <input type="number" id="large-combined" name="large-combined" value="0" min="0" disabled oninput="updateEstimator()" />
+          <input type="number" id="large-qty" name="large-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" />
         </td>
       </tr>
     </table>
     <!-- ===== END Service Estimator ===== -->
 
-    <div id="base-subtotal" style="text-align:center; font-weight:bold; margin: 1em 0;">Base Subtotal: $0</div>
+    <div id="base-subtotal" style="text-align:center; font-weight:bold; margin: 1em 0;">Detail Subtotal: $0</div>
 
     <!-- ===== BEGIN Add-Ons (Seat Shampooing $75; Headlight Polish renamed to Headlight Restoration $50) ===== -->
     <table>

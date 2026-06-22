@@ -1,28 +1,42 @@
-
-
-// Price maps used by estimator; prefer data-price attribute on elements if present.
-// NOTE: data-price on each package checkbox in index.html is the source of truth.
-// This map is only a fallback if a data-price attribute is missing.
-const BASE_PRICES = {
-  sedan: { interior: 100, exterior: 50, combined: 125 },
-  smallsuv: { interior: 125, exterior: 75, combined: 175 },
-  large: { interior: 150, exterior: 100, combined: 225 }
+// Estimator logic — single full-detail price per vehicle class.
+// The data-price attribute on each vehicle checkbox in index.html is the source
+// of truth; this map is only a fallback if a data-price attribute is missing.
+const VEHICLE_PRICES = {
+  sedan: 150,
+  smallsuv: 200,
+  large: 250
 };
 
 // Add-on prices keyed by the id middle segment after `addon-` in the HTML.
-// These correspond to the current rows in index.html.
+// data-price in the HTML is the source of truth; this map is a fallback.
 const ADDON_PRICES = {
-  'shampoo-sedan': 75,     // Seat Shampooing ($75) — data-price in HTML is source of truth
-  'headlight': 50,         // Headlight Restoration ($50) — data-price in HTML is source of truth
-  'engine': 25,            // Engine Bay Cleaning ($25)
-  'plastics': 25           // Plastic Trim Shine ($25)
+  'shampoo-sedan': 75,     // Seat Shampooing
+  'headlight': 50,         // Headlight Restoration
+  'engine': 25,            // Engine Bay Cleaning
+  'plastics': 25           // Plastic Trim Shine
 };
+
+// Human-friendly labels for the summary.
+const VEHICLE_LABEL = {
+  sedan: 'Sedan',
+  smallsuv: '2 Row SUV / Crossover',
+  large: '3 Row SUV / Van / Truck'
+};
+
+const ADDON_LABEL = {
+  'shampoo-sedan': 'Seat Shampooing',
+  headlight: 'Headlight Restoration',
+  engine: 'Engine Bay Cleaning',
+  plastics: 'Plastic Trim Shine'
+};
+
+const VEHICLE_TYPES = ['sedan', 'smallsuv', 'large'];
+const ADDON_KEYS = ['shampoo-sedan', 'headlight', 'engine', 'plastics'];
 
 function formatCurrency(n) {
   try {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
   } catch {
-    // minimal fallback
     return `$${(n || 0).toLocaleString()}`;
   }
 }
@@ -33,73 +47,50 @@ function getQtyFromInput(el) {
   return Number.isFinite(v) && v > 0 ? v : 0;
 }
 
-function getServicePrice(type, service) {
-  // Prefer data-price on checkbox or number input
-  const cb = document.getElementById(`${type}-${service}-check`);
-  const input = document.getElementById(`${type}-${service}`);
-  const dataVal = (cb && cb.dataset && cb.dataset.price) || (input && input.dataset && input.dataset.price);
+function getVehiclePrice(type) {
+  // Prefer data-price on the vehicle checkbox, fall back to the map.
+  const cb = document.getElementById(`${type}-check`);
+  const dataVal = cb && cb.dataset ? cb.dataset.price : null;
   const parsed = dataVal ? parseFloat(dataVal) : NaN;
   if (!Number.isNaN(parsed)) return parsed;
-  // Fallback to map
-  return BASE_PRICES?.[type]?.[service] ?? 0;
+  return VEHICLE_PRICES?.[type] ?? 0;
 }
 
 function getAddonPrice(key) {
-  // key corresponds to the id fragment after `addon-` (e.g., 'headlight')
-  // Prefer data-price on checkbox if present
   const cb = document.getElementById(`addon-${key}-check`);
   const input = document.getElementById(`addon-${key}-qty`);
   const dataVal = (cb && cb.dataset && cb.dataset.price) || (input && input.dataset && input.dataset.price);
   const parsed = dataVal ? parseFloat(dataVal) : NaN;
   if (!Number.isNaN(parsed)) return parsed;
-  // Fallback
   return ADDON_PRICES?.[key] ?? 0;
 }
 
-// Human-friendly labels for summary
-const VEHICLE_LABEL = {
-  sedan: 'Sedan',
-  smallsuv: '2 Row SUV / Crossover',
-  large: '3 Row SUV / Van / Truck'
-};
-
-const SERVICE_LABEL = {
-  interior: 'Interior',
-  exterior: 'Exterior',
-  combined: 'Combined'
-};
-
-const ADDON_LABEL = {
-  'shampoo-sedan': 'Seat Shampooing',
-  headlight: 'Headlight Restoration',
-  engine: 'Engine Bay Cleaning',
-  plastics: 'Plastic Trim Shine'
-};
-
-function buildEstimateSummary(baseSelections, addonSelections, totals) {
-  // Group base selections by vehicle type
-  const byType = {};
-  baseSelections.forEach(item => {
-    if (!byType[item.type]) byType[item.type] = { qty: 0, lines: [] };
-    // Read vehicle qty for header count
-    const vqty = parseInt((document.getElementById(`${item.type}-qty`) || { value: 0 }).value, 10) || 0;
-    byType[item.type].qty = Math.max(byType[item.type].qty, vqty);
-    const serviceName = SERVICE_LABEL[item.service] || item.service;
-    byType[item.type].lines.push(`  • ${serviceName} (${item.qty} @ ${formatCurrency(item.price)} = ${formatCurrency(item.line)})`);
-  });
-
-  const parts = [];
-  if (Object.keys(byType).length) {
-    parts.push('--- Base Services ---');
-    Object.entries(byType).forEach(([type, info]) => {
-      const label = VEHICLE_LABEL[type] || type;
-      const qtyDisplay = info.qty > 0 ? ` (x${info.qty})` : '';
-      parts.push(`${label}${qtyDisplay}`);
-      info.lines.forEach(l => parts.push(l));
-      parts.push(''); // blank line between vehicle groups
-    });
+// Enable/disable a vehicle's quantity input based on its checkbox, and default
+// the quantity to 1 the moment a vehicle is selected.
+function toggleVehicle(type) {
+  const cb = document.getElementById(`${type}-check`);
+  const qty = document.getElementById(`${type}-qty`);
+  if (!cb || !qty) return;
+  qty.disabled = !cb.checked;
+  qty.style.background = cb.checked ? '#fff' : '#eee';
+  if (!cb.checked) {
+    qty.value = 0;
+  } else if (getQtyFromInput(qty) === 0) {
+    qty.value = 1;
   }
+  updateEstimator();
+}
 
+function buildEstimateSummary(vehicleSelections, addonSelections, totals) {
+  const parts = [];
+  if (vehicleSelections.length) {
+    parts.push('--- Full Detail ---');
+    vehicleSelections.forEach(v => {
+      const label = VEHICLE_LABEL[v.type] || v.type;
+      parts.push(`  • ${label} (${v.qty} @ ${formatCurrency(v.price)} = ${formatCurrency(v.line)})`);
+    });
+    parts.push('');
+  }
   if (addonSelections.length) {
     parts.push('--- Add-Ons ---');
     addonSelections.forEach(a => {
@@ -108,139 +99,41 @@ function buildEstimateSummary(baseSelections, addonSelections, totals) {
     });
     parts.push('');
   }
-
-  parts.push(`Base Total: ${formatCurrency(totals.base)}`);
+  parts.push(`Detail Total: ${formatCurrency(totals.base)}`);
   parts.push(`Add-On Total: ${formatCurrency(totals.addons)}`);
   parts.push(`Overall Estimate: ${formatCurrency(totals.total)}`);
-
   return parts.join('\n');
 }
 
-function toggleServices(type) {
-  const checked = document.getElementById(`${type}-check`).checked;
-  const qty = document.getElementById(`${type}-qty`);
-  qty.disabled = !checked;
-  if (!checked) qty.value = 0;
-
-  document.querySelectorAll(`.${type}-service`).forEach(row => {
-    row.style.display = checked ? 'table-row' : 'none';
-    const input = row.querySelector('input[type="number"]');
-    if (!checked && input) input.value = 0;
-    const cb = row.querySelector('input[type="checkbox"]');
-    if (!checked && cb) cb.checked = false;
-  });
-
-  if (checked) {
-    syncServiceQty(type);
-  }
-}
-
-function syncServiceQty(type) {
-  // Read vehicle total quantity (as number)
-  const qty = parseInt(document.getElementById(`${type}-qty`).value) || 0;
-  // For each service row: if its checkbox is checked, enable the number input and set it to vehicle qty.
-  document.querySelectorAll(`.${type}-service`).forEach(row => {
-    const cb = row.querySelector('input[type="checkbox"]');
-    const input = row.querySelector('input[type="number"]');
-    if (!input || !cb) return;
-    if (cb.checked && qty > 0) {
-      input.disabled = false;
-      input.value = qty;
-    } else if (cb.checked && qty === 0) {
-      // checked but vehicle qty 0: enable input but keep value 0 so user can adjust
-      input.disabled = false;
-      input.value = 0;
-    } else {
-      input.disabled = true;
-      input.value = 0;
-    }
-  });
-}
-
-function toggleServiceItem(type, service) {
-  const check = document.getElementById(`${type}-${service}-check`);
-  const input = document.getElementById(`${type}-${service}`);
-  const qty = document.getElementById(`${type}-qty`).value;
-  if (!input || !check) return;
-  const vehicleQty = parseInt(qty) || 0;
-  if (check.checked) {
-    // Mutual exclusivity: Interior, Exterior, and Combined cannot both/all be
-    // selected for the same vehicle. Selecting Combined clears Interior/Exterior;
-    // selecting Interior or Exterior clears Combined.
-    const conflicts = service === 'combined'
-      ? ['interior', 'exterior']
-      : ['combined'];
-    conflicts.forEach(other => {
-      const otherCheck = document.getElementById(`${type}-${other}-check`);
-      const otherInput = document.getElementById(`${type}-${other}`);
-      if (otherCheck && otherCheck.checked) {
-        otherCheck.checked = false;
-        if (otherInput) {
-          otherInput.disabled = true;
-          otherInput.value = 0;
-        }
-      }
-    });
-
-    input.disabled = false;
-    // if vehicle has a positive qty, initialize service qty to match it
-    input.value = vehicleQty > 0 ? vehicleQty : 0;
-  } else {
-    input.disabled = true;
-    input.value = 0;
-  }
-  updateEstimator();
-}
-
-
 function updateEstimator() {
-  // Vehicle selectors
-  const vehicleTypes = ['sedan', 'smallsuv', 'large'];
-  const services = ['interior', 'exterior', 'combined'];
-
-  // Enable/disable quantity inputs based on checkbox state (visual only)
-  const sedanCheck = document.getElementById('sedan-check');
-  const sedanQty = document.getElementById('sedan-qty');
-  const smallsuvCheck = document.getElementById('smallsuv-check');
-  const smallsuvQty = document.getElementById('smallsuv-qty');
-  const largeCheck = document.getElementById('large-check');
-  const largeQty = document.getElementById('large-qty');
-  if (sedanQty && sedanCheck) { sedanQty.disabled = !sedanCheck.checked; sedanQty.style.background = sedanCheck.checked ? '#fff' : '#eee'; }
-  if (smallsuvQty && smallsuvCheck) { smallsuvQty.disabled = !smallsuvCheck.checked; smallsuvQty.style.background = smallsuvCheck.checked ? '#fff' : '#eee'; }
-  if (largeQty && largeCheck) { largeQty.disabled = !largeCheck.checked; largeQty.style.background = largeCheck.checked ? '#fff' : '#eee'; }
-
-  // Calculate base subtotal by summing checked sub-items only
+  // Base (full-detail) subtotal: one price per vehicle, times quantity.
   let baseSubtotal = 0;
-  const baseSelections = [];
-  vehicleTypes.forEach(type => {
-    // Only consider services if vehicle type is active (checked)
-    const vcb = document.getElementById(`${type}-check`);
-    if (!vcb || !vcb.checked) return;
-    services.forEach(service => {
-      const cb = document.getElementById(`${type}-${service}-check`);
-      const qtyEl = document.getElementById(`${type}-${service}`);
-      if (!cb || !qtyEl) return;
-      if (!cb.checked || qtyEl.disabled) return;
-      const qty = getQtyFromInput(qtyEl);
-      if (qty <= 0) return;
-      const price = getServicePrice(type, service);
-      const line = qty * price;
-      baseSubtotal += line;
-      baseSelections.push({ type, service, qty, price, line });
-    });
+  const vehicleSelections = [];
+  VEHICLE_TYPES.forEach(type => {
+    const cb = document.getElementById(`${type}-check`);
+    const qtyEl = document.getElementById(`${type}-qty`);
+    if (!cb || !qtyEl) return;
+    qtyEl.disabled = !cb.checked;
+    qtyEl.style.background = cb.checked ? '#fff' : '#eee';
+    if (!cb.checked) return;
+    const qty = getQtyFromInput(qtyEl);
+    if (qty <= 0) return;
+    const price = getVehiclePrice(type);
+    const line = qty * price;
+    baseSubtotal += line;
+    vehicleSelections.push({ type, qty, price, line });
   });
 
-  // Add-ons: compute from the add-on rows present in the DOM
-  const addonKeys = ['shampoo-sedan', 'headlight', 'engine', 'plastics'];
+  // Add-on subtotal.
   let addonSubtotal = 0;
   const addonSelections = [];
-  addonKeys.forEach(key => {
+  ADDON_KEYS.forEach(key => {
     const cb = document.getElementById(`addon-${key}-check`);
     const qtyEl = document.getElementById(`addon-${key}-qty`);
     if (!cb || !qtyEl) return;
-    qtyEl.disabled = !cb.checked; // keep UI state consistent
+    qtyEl.disabled = !cb.checked;
     qtyEl.style.background = cb.checked ? '#fff' : '#eee';
-    if (!cb.checked || qtyEl.disabled) return;
+    if (!cb.checked) return;
     const qty = getQtyFromInput(qtyEl);
     if (qty <= 0) return;
     const price = getAddonPrice(key);
@@ -249,118 +142,69 @@ function updateEstimator() {
     addonSelections.push({ key, qty, price, line });
   });
 
-  // Totals and outputs
+  // Totals and on-screen outputs.
   const total = baseSubtotal + addonSubtotal;
   const baseEl = document.getElementById('base-subtotal');
   const addonEl = document.getElementById('addon-subtotal');
   const totalEl = document.getElementById('estimate-result');
-  if (baseEl) baseEl.textContent = `Base Subtotal: ${formatCurrency(baseSubtotal)}`;
+  if (baseEl) baseEl.textContent = `Detail Subtotal: ${formatCurrency(baseSubtotal)}`;
   if (addonEl) addonEl.textContent = `Add-On Subtotal: ${formatCurrency(addonSubtotal)}`;
   if (totalEl) totalEl.textContent = `Total: ${formatCurrency(total)}`;
 
-  // Build human-readable summary string
+  // Short, single-line summary for display/debugging.
   const parts = [];
-  // Group base selections by vehicle type to show counts and services per type
-  const byType = {};
-  baseSelections.forEach(item => {
-    if (!byType[item.type]) byType[item.type] = { qty: 0, services: new Set() };
-    // Vehicle qty can be read from the vehicle qty input to avoid double counting
-    const vqty = parseInt((document.getElementById(`${item.type}-qty`) || { value: 0 }).value, 10) || 0;
-    byType[item.type].qty = Math.max(byType[item.type].qty, vqty);
-    byType[item.type].services.add(item.service);
+  vehicleSelections.forEach(v => {
+    const label = VEHICLE_LABEL[v.type] || v.type;
+    const plural = v.qty > 1 ? 's' : '';
+    parts.push(`${v.qty} ${label}${plural} (Full Detail)`);
   });
-  Object.entries(byType).forEach(([type, info]) => {
-    if (info.qty > 0) {
-      const label = VEHICLE_LABEL[type] || type;
-      const plural = info.qty > 1 ? 's' : '';
-      const services = Array.from(info.services).map(s => SERVICE_LABEL[s] || s).join(' + ');
-      parts.push(`${info.qty} ${label}${plural}${services ? ` | ${services}` : ''}`);
-    }
-  });
-
-  // Add-ons list
   if (addonSelections.length) {
     const addonNames = addonSelections.map(a => ADDON_LABEL[a.key] || a.key).join(', ');
     if (addonNames) parts.push(`Add-ons: ${addonNames}`);
   }
-
-  // Append total at the end
   parts.push(`Estimate ${formatCurrency(total)}`);
 
-  const summaryStr = parts.join(' | ');
-
-  // Hidden summary (readable multiline string for Formspree)
+  // Hidden, readable multi-line summary submitted to Formspree.
   const hidden = document.getElementById('estimate-hidden');
-  const full = buildEstimateSummary(baseSelections, addonSelections, { base: baseSubtotal, addons: addonSubtotal, total });
-  if (hidden) hidden.value = (baseSelections.length || addonSelections.length) ? full : '';
+  const full = buildEstimateSummary(vehicleSelections, addonSelections, { base: baseSubtotal, addons: addonSubtotal, total });
+  if (hidden) hidden.value = (vehicleSelections.length || addonSelections.length) ? full : '';
 }
 
-// Display confirmation message after form submit
-document.getElementById('intake-form').addEventListener('submit', function (event) {
-  // Ensure estimator and hidden summary are current
-  try { updateEstimator(); } catch {}
-  // Strip non-essential fields from submission so Formspree gets a concise payload
-  try {
-    const form = document.getElementById('intake-form');
-    const allow = new Set(['name', 'email', 'estimate', 'message', '_redirect']);
-    // Remove name attribute from all but the allowed ones so they won't be submitted
-    Array.from(form.elements).forEach(el => {
-      if (el.name && !allow.has(el.name)) {
-        el.removeAttribute('name');
-      }
-    });
-  } catch {}
-  const name = document.getElementById('name').value;
-  document.getElementById('confirmation').innerText =
-    `Thanks, ${name}! We’ve received your request.`;
-});
+// Confirmation message + concise Formspree payload on submit.
+const intakeForm = document.getElementById('intake-form');
+if (intakeForm) {
+  intakeForm.addEventListener('submit', function () {
+    try { updateEstimator(); } catch {}
+    try {
+      const allow = new Set(['name', 'email', 'estimate', 'message', '_redirect']);
+      Array.from(intakeForm.elements).forEach(el => {
+        if (el.name && !allow.has(el.name)) el.removeAttribute('name');
+      });
+    } catch {}
+    const nameEl = document.getElementById('name');
+    const confirmation = document.getElementById('confirmation');
+    if (confirmation) confirmation.innerText = `Thanks, ${nameEl ? nameEl.value : ''}! We’ve received your request.`;
+  });
+}
 
-// Initialize event listeners and estimator
+// Initialize estimator and wire up listeners.
 window.addEventListener('DOMContentLoaded', function () {
   updateEstimator();
 
-  // Attach listeners per vehicle type and their services so syncing works
-  const vehicleTypes = ['sedan', 'smallsuv', 'large'];
-  const services = ['interior', 'exterior', 'combined'];
-
-  vehicleTypes.forEach(type => {
-    const typeCheck = document.getElementById(`${type}-check`);
-    const typeQty = document.getElementById(`${type}-qty`);
-    if (typeCheck) typeCheck.addEventListener('change', () => { toggleServices(type); updateEstimator(); });
-    if (typeQty) {
-      typeQty.addEventListener('input', () => { syncServiceQty(type); updateEstimator(); });
-      typeQty.addEventListener('change', () => { syncServiceQty(type); updateEstimator(); });
+  VEHICLE_TYPES.forEach(type => {
+    const cb = document.getElementById(`${type}-check`);
+    const qty = document.getElementById(`${type}-qty`);
+    if (cb) cb.addEventListener('change', () => toggleVehicle(type));
+    if (qty) {
+      qty.addEventListener('input', updateEstimator);
+      qty.addEventListener('change', updateEstimator);
     }
-
-    // attach service checkbox listeners and number input listeners
-    services.forEach(service => {
-      const sid = `${type}-${service}-check`;
-      const cid = document.getElementById(sid);
-      if (cid) cid.addEventListener('change', () => { toggleServiceItem(type, service); });
-
-      const nid = `${type}-${service}`;
-      const nEl = document.getElementById(nid);
-      if (nEl) {
-        nEl.addEventListener('input', updateEstimator);
-      }
-    });
   });
 
-  // Attach listeners for addon fields
-  const addonIds = [
-    'addon-shampoo-sedan-check','addon-shampoo-sedan-qty',
-    'addon-shampoo-van-check','addon-shampoo-van-qty',
-    'addon-headlight-check','addon-headlight-qty',
-    'addon-engine-check','addon-engine-qty',
-    'addon-plastics-check','addon-plastics-qty',
-    'addon-wheel-check','addon-wheel-qty'
-  ];
-  addonIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('change', updateEstimator);
-      el.addEventListener('input', updateEstimator);
-    }
+  ADDON_KEYS.forEach(key => {
+    const cb = document.getElementById(`addon-${key}-check`);
+    const qty = document.getElementById(`addon-${key}-qty`);
+    if (cb) cb.addEventListener('change', updateEstimator);
+    if (qty) qty.addEventListener('input', updateEstimator);
   });
 });
-
