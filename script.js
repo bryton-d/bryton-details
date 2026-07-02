@@ -10,7 +10,7 @@ const VEHICLE_PRICES = {
 // Add-on prices keyed by the id middle segment after `addon-` in the HTML.
 // data-price in the HTML is the source of truth; this map is a fallback.
 const ADDON_PRICES = {
-  'shampoo-sedan': 75,     // Seat Shampooing
+  'shampoo-sedan': 50,     // Seat Shampooing
   'headlight': 50,         // Headlight Restoration
   'engine': 25,            // Engine Bay Cleaning
   'plastics': 25           // Plastic Trim Shine
@@ -133,7 +133,7 @@ function updateEstimator() {
     if (!cb || !qtyEl) return;
     qtyEl.disabled = !cb.checked;
     qtyEl.style.background = cb.checked ? '#fff' : '#eee';
-    if (!cb.checked) return;
+    if (!cb.checked) { qtyEl.value = 0; return; }
     const qty = getQtyFromInput(qtyEl);
     if (qty <= 0) return;
     const price = getAddonPrice(key);
