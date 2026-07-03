@@ -106,13 +106,13 @@ textarea:focus-visible {
 /* ---------------------------------------------------------------------
    3. Header / navigation
 --------------------------------------------------------------------- */
+/* Solid pure black so the header reads identically on every page (including
+   over the white Instagram embeds) and the logo emblem blends seamlessly. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(10, 10, 11, 0.86);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: #000;
   border-bottom: 1px solid var(--line);
 }
 
@@ -127,8 +127,11 @@ textarea:focus-visible {
   gap: 16px;
 }
 
-/* Text wordmark — placeholder slot for the logo <img> when assets arrive */
+/* Brand lockup: badge chip + text wordmark */
 .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.02rem;
@@ -139,6 +142,14 @@ textarea:focus-visible {
 }
 .wordmark span { color: var(--text-lo); font-weight: 600; }
 .wordmark:hover { text-decoration: none; }
+
+/* Cropped emblem (pure-black background) floats directly on the black header */
+.brand-mark {
+  height: 40px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
 
 .site-nav {
   display: flex;
@@ -170,9 +181,9 @@ textarea:focus-visible {
   padding: 8px 10px;
 }
 .site-nav .nav-instagram img {
-  height: 20px;
-  width: 20px;
-  border-radius: 4px;
+  height: 26px;
+  width: 26px;
+  border-radius: 6px;
   display: block;
 }
 
@@ -248,44 +259,40 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------------------
-   4. Hero (homepage)
+   4. Hero (homepage) — editorial split: copy leads on the left, the
+   badge sits on the right like a seal. The stage is pure #000 so
+   BMA_logo-black.jpg (white badge on a black square) blends seamlessly
+   and never reads as a boxed image.
 --------------------------------------------------------------------- */
 .hero {
   position: relative;
-  min-height: min(82vh, 760px);
-  display: flex;
-  align-items: flex-end;
+  background: #000;
   overflow: hidden;
   isolation: isolate;
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 42%;
-  z-index: -2;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(180deg,
-      rgba(10, 10, 11, 0.62) 0%,
-      rgba(10, 10, 11, 0.30) 38%,
-      rgba(10, 10, 11, 0.55) 68%,
-      rgba(10, 10, 11, 0.97) 100%);
+  border-bottom: 1px solid var(--line);
 }
 
 .hero-content {
   width: 100%;
   max-width: var(--content-w);
   margin: 0 auto;
-  padding: 140px 20px 72px;
+  padding: 56px 20px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.hero-copy {
+  max-width: 580px;
+}
+
+.hero-logo {
+  width: min(36vw, 400px);
+  height: auto;
+  flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .hero-kicker {
@@ -299,12 +306,12 @@ textarea:focus-visible {
 }
 
 .hero h1 {
-  font-size: clamp(2.3rem, 5.6vw, 4rem);
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.04;
+  line-height: 1.05;
   max-width: 14ch;
-  margin-bottom: 0.4em;
+  margin-bottom: 0.45em;
 }
 
 .hero-sub {
@@ -328,10 +335,24 @@ textarea:focus-visible {
   margin: 0;
 }
 
-@media (max-width: 600px) {
-  .hero { min-height: 74vh; }
-  .hero-content { padding: 110px 20px 56px; }
+@media (max-width: 820px) {
+  .hero-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+    padding: 48px 20px 48px;
+  }
+  .hero h1 { margin-left: auto; margin-right: auto; }
+  .hero-sub { margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
   .hero-actions .btn { width: 100%; text-align: center; }
+  /* Badge closes the hero like a stamp beneath the pitch */
+  .hero-logo {
+    order: 10;
+    width: min(60vw, 250px);
+    margin-top: 1.8em;
+  }
 }
 
 /* ---------------------------------------------------------------------
@@ -373,6 +394,7 @@ section { padding: 0; }
 .page-title {
   font-size: clamp(1.7rem, 4vw, 2.4rem);
   font-weight: 800;
+  color: #fff;
   text-align: center;
   margin: 2.2em auto 0.4em;
   max-width: var(--content-w);
@@ -576,15 +598,9 @@ table td:last-child {
 table th:first-child, table td:first-child { width: 40px; }
 table th:last-child, table td:last-child { width: 84px; }
 
-/* Vehicle rows read slightly stronger than their service sub-rows */
+/* Vehicle rows carry the full-detail price in their labels */
 tr.vehicle-row td { background: var(--paper-deep); }
 tr.vehicle-row label { font-weight: 600; }
-
-tr.service-row td {
-  background: #fbfbf9;
-  font-size: 0.95rem;
-}
-tr.service-row label { font-weight: 500; }
 
 table input[type="checkbox"] {
   vertical-align: middle;
@@ -660,22 +676,21 @@ td input[type="checkbox"] {
 
 .about-photos {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 1.2em;
   margin-top: 1.5em;
 }
 
+/* Single landscape feature photo */
 .about-photos img {
-  max-width: 240px;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
 }
 
 @media (max-width: 700px) {
   .about-container { padding: 1.6em 1.1em; margin-left: 16px; margin-right: 16px; }
-  .about-photos { flex-direction: column; align-items: center; }
-  .about-photos img { max-width: 100%; }
 }
 
 /* ---------------------------------------------------------------------
@@ -800,17 +815,6 @@ td input[type="checkbox"] {
 --------------------------------------------------------------------- */
 @media (max-width: 600px) {
   .form-card { padding: 26px 16px; margin-left: 12px; margin-right: 12px; }
-
-  /* Allow estimator service labels to wrap on mobile instead of forcing
-     the row wider than the viewport. !important is required to override
-     the inline white-space:nowrap on these cells. */
-  .service-label-cell { white-space: normal !important; }
-
-  .service-row td:last-child { width: 70px; padding-left: 8px; }
-  .service-row td:last-child input[type="number"] {
-    max-width: 60px;
-    margin-bottom: 0;
-  }
 
   table td { padding: 10px 6px; }
 }
