@@ -1,37 +1,12 @@
-// Estimator logic — single full-detail price per vehicle class.
-// The data-price attribute on each vehicle checkbox in index.html is the source
-// of truth; this map is only a fallback if a data-price attribute is missing.
-const VEHICLE_PRICES = {
-  sedan: 150,
-  smallsuv: 200,
-  large: 250
-};
+// Estimator + service rendering. Services, prices, order, and visibility come
+// from services.js (loaded first); this file only turns that config into the
+// pricing copy and estimator rows, and does the math.
 
-// Add-on prices keyed by the id middle segment after `addon-` in the HTML.
-// data-price in the HTML is the source of truth; this map is a fallback.
-const ADDON_PRICES = {
-  'shampoo-sedan': 50,     // Seat Shampooing
-  'headlight': 50,         // Headlight Restoration
-  'engine': 50,            // Engine Bay Cleaning
-  'plastics': 25           // Plastic Trim Shine
-};
+const BASE_SERVICES = SERVICES.filter(s => s.type === 'base' && s.visible);
+const ADDON_SERVICES = SERVICES.filter(s => s.type === 'addon' && s.visible);
 
-// Human-friendly labels for the summary.
-const VEHICLE_LABEL = {
-  sedan: 'Sedan',
-  smallsuv: '2 Row SUV / Crossover',
-  large: '3 Row SUV / Van / Truck'
-};
-
-const ADDON_LABEL = {
-  'shampoo-sedan': 'Seat Shampooing',
-  headlight: 'Headlight Restoration',
-  engine: 'Engine Bay Cleaning',
-  plastics: 'Plastic Trim Shine'
-};
-
-const VEHICLE_TYPES = ['sedan', 'smallsuv', 'large'];
-const ADDON_KEYS = ['shampoo-sedan', 'headlight', 'engine', 'plastics'];
+// One entry per estimator row; filled in by renderEstimator().
+const estimatorRows = [];
 
 function formatCurrency(n) {
   try {
@@ -47,58 +22,141 @@ function getQtyFromInput(el) {
   return Number.isFinite(v) && v > 0 ? v : 0;
 }
 
-function getVehiclePrice(type) {
-  // Prefer data-price on the vehicle checkbox, fall back to the map.
-  const cb = document.getElementById(`${type}-check`);
-  const dataVal = cb && cb.dataset ? cb.dataset.price : null;
-  const parsed = dataVal ? parseFloat(dataVal) : NaN;
-  if (!Number.isNaN(parsed)) return parsed;
-  return VEHICLE_PRICES?.[type] ?? 0;
+function el(tag, attrs, text) {
+  const node = document.createElement(tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => node.setAttribute(k, v));
+  if (text) node.textContent = text;
+  return node;
 }
 
-function getAddonPrice(key) {
-  const cb = document.getElementById(`addon-${key}-check`);
-  const input = document.getElementById(`addon-${key}-qty`);
-  const dataVal = (cb && cb.dataset && cb.dataset.price) || (input && input.dataset && input.dataset.price);
-  const parsed = dataVal ? parseFloat(dataVal) : NaN;
-  if (!Number.isNaN(parsed)) return parsed;
-  return ADDON_PRICES?.[key] ?? 0;
+function featuredTag() {
+  return el('span', { class: 'featured-tag' }, 'Featured');
 }
 
-// Enable/disable a vehicle's quantity input based on its checkbox, and default
-// the quantity to 1 the moment a vehicle is selected.
-function toggleVehicle(type) {
-  const cb = document.getElementById(`${type}-check`);
-  const qty = document.getElementById(`${type}-qty`);
-  if (!cb || !qty) return;
-  qty.disabled = !cb.checked;
-  qty.style.background = cb.checked ? '#fff' : '#eee';
-  if (!cb.checked) {
-    qty.value = 0;
-  } else if (getQtyFromInput(qty) === 0) {
-    qty.value = 1;
+// ---- Pricing & Services copy (homepage, outside the form) -----------------
+
+function renderPricingCopy() {
+  const base = document.getElementById('pricing-base');
+  if (base) {
+    BASE_SERVICES.forEach(svc => {
+      const h3 = el('h3', {}, `${svc.name} Pricing`);
+      if (svc.featured) h3.append(' ', featuredTag());
+      const ul = el('ul');
+      VEHICLES.forEach(v => {
+        if (svc.prices[v.id] == null) return;
+        ul.appendChild(el('li', {}, `${v.label} — ${formatCurrency(svc.prices[v.id])}`));
+      });
+      base.append(h3, ul);
+    });
+  }
+
+  const addons = document.getElementById('pricing-addons');
+  if (addons && ADDON_SERVICES.length) {
+    addons.appendChild(el('h3', {}, 'Add-Ons'));
+    addons.appendChild(el('p', {}, 'Enhance your detail with optional add-on services to give your vehicle an extra touch of care.'));
+    const ul = el('ul');
+    ADDON_SERVICES.forEach(svc => {
+      const li = el('li', {}, `${svc.name} — ${formatCurrency(svc.price)}`);
+      if (svc.featured) li.append(' ', featuredTag());
+      ul.appendChild(li);
+    });
+    addons.appendChild(ul);
+  }
+
+  // The "What's Included" copy describes Full Detail, so it follows that service.
+  const includes = document.getElementById('pricing-full-includes');
+  if (includes) includes.hidden = !BASE_SERVICES.some(s => s.id === 'full');
+
+  // Hero "from $X": cheapest visible base price.
+  const heroFrom = document.getElementById('hero-from');
+  const prices = BASE_SERVICES.flatMap(s => Object.values(s.prices));
+  if (heroFrom) heroFrom.textContent = prices.length ? `Details from ${formatCurrency(Math.min(...prices))}` : '';
+}
+
+// ---- Estimator rows --------------------------------------------------------
+
+function makeRow(row, cells) {
+  const tr = el('tr', row.kind === 'base' ? { class: 'vehicle-row' } : {});
+  cells.forEach(c => tr.appendChild(c));
+  return tr;
+}
+
+function renderEstimator() {
+  const baseTable = document.getElementById('service-table');
+  if (baseTable) {
+    BASE_SERVICES.forEach(svc => {
+      const head = el('th', { colspan: '3', style: 'text-align:left; padding-top: 8px;' }, svc.name);
+      if (svc.featured) head.append(' ', featuredTag());
+      baseTable.appendChild(el('tr')).appendChild(head);
+
+      VEHICLES.forEach(v => {
+        const price = svc.prices[v.id];
+        if (price == null) return;
+        const id = `${svc.id}-${v.id}`;
+        const row = { kind: 'base', svc, label: v.label, price, cb: null, qty: null };
+
+        const cb = el('input', { type: 'checkbox', id: `${id}-check`, name: `${id}-check` });
+        const label = el('label', { for: `${id}-check` }, `${v.label} — ${formatCurrency(price)}`);
+        const qty = el('input', { type: 'number', id: `${id}-qty`, name: `${id}-qty`, value: '0', placeholder: 'Qty', min: '0', disabled: '' });
+        row.cb = cb; row.qty = qty;
+
+        const td1 = el('td'); td1.appendChild(cb);
+        const td2 = el('td'); td2.appendChild(label);
+        const td3 = el('td', { style: 'text-align:center;' }); td3.appendChild(qty);
+        baseTable.appendChild(makeRow(row, [td1, td2, td3]));
+        estimatorRows.push(row);
+      });
+    });
+  }
+
+  const addonTable = document.getElementById('addon-table');
+  if (addonTable) {
+    if (!ADDON_SERVICES.length) addonTable.hidden = true;
+    ADDON_SERVICES.forEach(svc => {
+      const id = `addon-${svc.id}`;
+      const row = { kind: 'addon', svc, label: svc.name, price: svc.price, cb: null, qty: null };
+
+      const cb = el('input', { type: 'checkbox', id: `${id}-check`, name: `${id}-check` });
+      const label = el('label', { for: `${id}-check` }, `${svc.name} (${formatCurrency(svc.price)})`);
+      if (svc.featured) label.append(' ', featuredTag());
+      const qty = el('input', { type: 'number', id: `${id}-qty`, name: `${id}-qty`, value: '0', min: '0', disabled: '' });
+      row.cb = cb; row.qty = qty;
+
+      const td1 = el('td'); td1.appendChild(cb);
+      const td2 = el('td'); td2.appendChild(label);
+      const td3 = el('td'); td3.appendChild(qty);
+      addonTable.appendChild(makeRow(row, [td1, td2, td3]));
+      estimatorRows.push(row);
+    });
+  }
+}
+
+// Enable/disable a row's quantity input based on its checkbox, defaulting the
+// quantity to 1 the moment it is selected.
+function toggleRow(row) {
+  row.qty.disabled = !row.cb.checked;
+  row.qty.style.background = row.cb.checked ? '#fff' : '#eee';
+  if (!row.cb.checked) {
+    row.qty.value = 0;
+  } else if (getQtyFromInput(row.qty) === 0) {
+    row.qty.value = 1;
   }
   updateEstimator();
 }
 
-function buildEstimateSummary(vehicleSelections, addonSelections, totals) {
+function buildEstimateSummary(selections, totals) {
   const parts = [];
-  if (vehicleSelections.length) {
-    parts.push('--- Full Detail ---');
-    vehicleSelections.forEach(v => {
-      const label = VEHICLE_LABEL[v.type] || v.type;
-      parts.push(`  • ${label} (${v.qty} @ ${formatCurrency(v.price)} = ${formatCurrency(v.line)})`);
-    });
+  const sections = [
+    ...BASE_SERVICES.map(s => ({ title: s.name, svc: s })),
+    { title: 'Add-Ons', addons: true }
+  ];
+  sections.forEach(sec => {
+    const lines = selections.filter(s => sec.addons ? s.kind === 'addon' : s.svc === sec.svc);
+    if (!lines.length) return;
+    parts.push(`--- ${sec.title} ---`);
+    lines.forEach(s => parts.push(`  • ${s.label} (${s.qty} @ ${formatCurrency(s.price)} = ${formatCurrency(s.line)})`));
     parts.push('');
-  }
-  if (addonSelections.length) {
-    parts.push('--- Add-Ons ---');
-    addonSelections.forEach(a => {
-      const name = ADDON_LABEL[a.key] || a.key;
-      parts.push(`  • ${name} (${a.qty} @ ${formatCurrency(a.price)} = ${formatCurrency(a.line)})`);
-    });
-    parts.push('');
-  }
+  });
   parts.push(`Detail Total: ${formatCurrency(totals.base)}`);
   parts.push(`Add-On Total: ${formatCurrency(totals.addons)}`);
   parts.push(`Overall Estimate: ${formatCurrency(totals.total)}`);
@@ -106,43 +164,21 @@ function buildEstimateSummary(vehicleSelections, addonSelections, totals) {
 }
 
 function updateEstimator() {
-  // Base (full-detail) subtotal: one price per vehicle, times quantity.
   let baseSubtotal = 0;
-  const vehicleSelections = [];
-  VEHICLE_TYPES.forEach(type => {
-    const cb = document.getElementById(`${type}-check`);
-    const qtyEl = document.getElementById(`${type}-qty`);
-    if (!cb || !qtyEl) return;
-    qtyEl.disabled = !cb.checked;
-    qtyEl.style.background = cb.checked ? '#fff' : '#eee';
-    if (!cb.checked) return;
-    const qty = getQtyFromInput(qtyEl);
-    if (qty <= 0) return;
-    const price = getVehiclePrice(type);
-    const line = qty * price;
-    baseSubtotal += line;
-    vehicleSelections.push({ type, qty, price, line });
-  });
-
-  // Add-on subtotal.
   let addonSubtotal = 0;
-  const addonSelections = [];
-  ADDON_KEYS.forEach(key => {
-    const cb = document.getElementById(`addon-${key}-check`);
-    const qtyEl = document.getElementById(`addon-${key}-qty`);
-    if (!cb || !qtyEl) return;
-    qtyEl.disabled = !cb.checked;
-    qtyEl.style.background = cb.checked ? '#fff' : '#eee';
-    if (!cb.checked) { qtyEl.value = 0; return; }
-    const qty = getQtyFromInput(qtyEl);
+  const selections = [];
+
+  estimatorRows.forEach(row => {
+    row.qty.disabled = !row.cb.checked;
+    row.qty.style.background = row.cb.checked ? '#fff' : '#eee';
+    if (!row.cb.checked) { row.qty.value = 0; return; }
+    const qty = getQtyFromInput(row.qty);
     if (qty <= 0) return;
-    const price = getAddonPrice(key);
-    const line = qty * price;
-    addonSubtotal += line;
-    addonSelections.push({ key, qty, price, line });
+    const line = qty * row.price;
+    if (row.kind === 'base') baseSubtotal += line; else addonSubtotal += line;
+    selections.push({ kind: row.kind, svc: row.svc, label: row.label, qty, price: row.price, line });
   });
 
-  // Totals and on-screen outputs.
   const total = baseSubtotal + addonSubtotal;
   const baseEl = document.getElementById('base-subtotal');
   const addonEl = document.getElementById('addon-subtotal');
@@ -151,23 +187,9 @@ function updateEstimator() {
   if (addonEl) addonEl.textContent = `Add-On Subtotal: ${formatCurrency(addonSubtotal)}`;
   if (totalEl) totalEl.textContent = `Total: ${formatCurrency(total)}`;
 
-  // Short, single-line summary for display/debugging.
-  const parts = [];
-  vehicleSelections.forEach(v => {
-    const label = VEHICLE_LABEL[v.type] || v.type;
-    const plural = v.qty > 1 ? 's' : '';
-    parts.push(`${v.qty} ${label}${plural} (Full Detail)`);
-  });
-  if (addonSelections.length) {
-    const addonNames = addonSelections.map(a => ADDON_LABEL[a.key] || a.key).join(', ');
-    if (addonNames) parts.push(`Add-ons: ${addonNames}`);
-  }
-  parts.push(`Estimate ${formatCurrency(total)}`);
-
   // Hidden, readable multi-line summary submitted to Formspree.
   const hidden = document.getElementById('estimate-hidden');
-  const full = buildEstimateSummary(vehicleSelections, addonSelections, { base: baseSubtotal, addons: addonSubtotal, total });
-  if (hidden) hidden.value = (vehicleSelections.length || addonSelections.length) ? full : '';
+  if (hidden) hidden.value = selections.length ? buildEstimateSummary(selections, { base: baseSubtotal, addons: addonSubtotal, total }) : '';
 }
 
 // Confirmation message + concise Formspree payload on submit.
@@ -187,24 +209,14 @@ if (intakeForm) {
   });
 }
 
-// Initialize estimator and wire up listeners.
+// Build everything from services.js, then wire up listeners.
 window.addEventListener('DOMContentLoaded', function () {
+  renderPricingCopy();
+  renderEstimator();
+  estimatorRows.forEach(row => {
+    row.cb.addEventListener('change', () => toggleRow(row));
+    row.qty.addEventListener('input', updateEstimator);
+    row.qty.addEventListener('change', updateEstimator);
+  });
   updateEstimator();
-
-  VEHICLE_TYPES.forEach(type => {
-    const cb = document.getElementById(`${type}-check`);
-    const qty = document.getElementById(`${type}-qty`);
-    if (cb) cb.addEventListener('change', () => toggleVehicle(type));
-    if (qty) {
-      qty.addEventListener('input', updateEstimator);
-      qty.addEventListener('change', updateEstimator);
-    }
-  });
-
-  ADDON_KEYS.forEach(key => {
-    const cb = document.getElementById(`addon-${key}-check`);
-    const qty = document.getElementById(`addon-${key}-qty`);
-    if (cb) cb.addEventListener('change', updateEstimator);
-    if (qty) qty.addEventListener('input', updateEstimator);
-  });
 });

@@ -67,7 +67,7 @@
             <a class="btn btn-primary" href="#intake-form">Get an instant estimate</a>
             <a class="btn btn-ghost" href="tel:+14849428485">Call 484-942-8485</a>
           </div>
-          <p class="hero-trust">Full detail from $150 &nbsp;·&nbsp; Owner-operated &nbsp;·&nbsp; Serving Delco &amp; Montco</p>
+          <p class="hero-trust"><span id="hero-from">Details from $125</span> &nbsp;·&nbsp; Owner-operated &nbsp;·&nbsp; Serving Delco &amp; Montco</p>
         </div>
         <img class="hero-logo" src="images/Logo.png" alt="Bryton's Mobile Auto Detailing — Established 2025" fetchpriority="high" width="820" height="660" />
       </div>
@@ -77,31 +77,22 @@
     <section class="pricing-section">
       <h2 style="text-align: center;">Pricing &amp; Services</h2>
 
-      <p>Your vehicle gets our complete full-detail treatment, inside and out, at one simple price based on its size.</p>
+      <p>Choose a full detail or an interior detail, with pricing based on your vehicle's size. Want to go further? Add optional extras below.</p>
 
-      <h3>Full-Detail Pricing</h3>
-      <ul>
-        <li>Sedan &mdash; $150</li>
-        <li>2 Row SUV / Crossover &mdash; $200</li>
-        <li>3 Row SUV / Van / Truck &mdash; $250</li>
-      </ul>
+      <!-- Price lists are generated from services.js -->
+      <div id="pricing-base"></div>
 
+      <div id="pricing-full-includes">
       <h3>What’s Included in Every Full Detail</h3>
       <p><strong>Interior:</strong> blow out, full vacuum, clean all touch points, window cleaning, plastic shine/protection, and carpet cleaning.</p>
       <p><strong>Exterior:</strong> hand wash, hand dry, window cleaning, tire shine, wheel detailing, and a ceramic spray for lasting paint protection.</p>
+      </div>
 
-      <h3>Add-Ons</h3>
-      <p>Enhance your detail with optional add-on services to give your vehicle an extra touch of care.</p>
-      <ul>
-        <li>Seat Shampooing</li>
-        <li>Headlight Restoration</li>
-        <li>Engine Bay Cleaning</li>
-        <li>Plastic Restoration / Shine</li>
-      </ul>
+      <div id="pricing-addons"></div>
 
       <p>Whether it’s one vehicle or a whole family fleet, select your vehicle type and add any extras you’d like. Once you’ve made your selections, submit the form and I’ll review your request and get back to you to finalize your appointment.</p>
 
-      <p><em>Pricing is a single full-detail rate per vehicle size — Sedan, 2 Row SUV / Crossover, or 3 Row SUV / Van / Truck.</em></p>
+      <p><em>Pricing is based on vehicle size — Sedan, 2 Row SUV / Crossover, or 3 Row SUV / Van / Truck.</em></p>
 
     </section>
     <!-- ===== END Pricing & Services copy ===== -->
@@ -117,73 +108,26 @@
       <label for="email">Email:</label>
       <input id="email" name="email" type="email" required />
 
-    <!-- ===== BEGIN Service Estimator (single full-detail price per vehicle class) ===== -->
-    <table>
-      <caption>Service Estimator &mdash; Full Detail</caption>
+    <!-- ===== BEGIN Service Estimator (rows are generated from services.js) ===== -->
+    <table id="service-table">
+      <caption>Service Estimator</caption>
       <tr>
         <th></th>
-        <th style="text-align:left;">Vehicle Type (Full Detail)</th>
+        <th style="text-align:left;">Service / Vehicle Type</th>
         <th style="text-align:center;">Qty</th>
-      </tr>
-
-      <!-- Sedan -->
-      <tr class="vehicle-row">
-        <td><input type="checkbox" id="sedan-check" name="sedan-check" data-price="150" onchange="toggleVehicle('sedan')" /></td>
-        <td><label for="sedan-check">Sedan &mdash; $150</label></td>
-        <td style="text-align:center;">
-          <input type="number" id="sedan-qty" name="sedan-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- 2 Row SUV / Crossover -->
-      <tr class="vehicle-row">
-        <td><input type="checkbox" id="smallsuv-check" name="smallsuv-check" data-price="200" onchange="toggleVehicle('smallsuv')" /></td>
-        <td><label for="smallsuv-check">2 Row SUV / Crossover &mdash; $200</label></td>
-        <td style="text-align:center;">
-          <input type="number" id="smallsuv-qty" name="smallsuv-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" />
-        </td>
-      </tr>
-
-      <!-- 3 Row SUV / Van / Truck -->
-      <tr class="vehicle-row">
-        <td><input type="checkbox" id="large-check" name="large-check" data-price="250" onchange="toggleVehicle('large')" /></td>
-        <td><label for="large-check">3 Row SUV / Van / Truck &mdash; $250</label></td>
-        <td style="text-align:center;">
-          <input type="number" id="large-qty" name="large-qty" value="0" placeholder="Qty" min="0" disabled oninput="updateEstimator()" />
-        </td>
       </tr>
     </table>
     <!-- ===== END Service Estimator ===== -->
 
     <div id="base-subtotal" style="text-align:center; font-weight:bold; margin: 1em 0;">Detail Subtotal: $0</div>
 
-    <!-- ===== BEGIN Add-Ons (Seat Shampooing $50; Headlight Polish renamed to Headlight Restoration $50) ===== -->
-    <table>
+    <!-- ===== BEGIN Add-Ons (rows are generated from services.js) ===== -->
+    <table id="addon-table">
       <caption>Add-Ons</caption>
       <tr>
         <th></th>
         <th style="text-align:left;">Add-On</th>
         <th style="text-align:center;">Qty</th>
-      </tr>
-      <tr>
-  <td><input type="checkbox" id="addon-shampoo-sedan-check" name="addon-shampoo-sedan-check" data-price="50" onchange="updateEstimator()" /></td>
-        <td><label for="addon-shampoo-sedan-check">Seat Shampooing ($50)</label></td>
-  <td><input type="number" id="addon-shampoo-sedan-qty" name="addon-shampoo-sedan-qty" value="0" min="0" oninput="updateEstimator()" /></td>
-      </tr>
-      <tr>
-  <td><input type="checkbox" id="addon-headlight-check" name="addon-headlight-check" data-price="50" onchange="updateEstimator()" /></td>
-        <td><label for="addon-headlight-check">Headlight Restoration ($50)</label></td>
-  <td><input type="number" id="addon-headlight-qty" name="addon-headlight-qty" value="0" min="0" oninput="updateEstimator()" /></td>
-      </tr>
-      <tr>
-  <td><input type="checkbox" id="addon-engine-check" name="addon-engine-check" onchange="updateEstimator()" /></td>
-        <td><label for="addon-engine-check">Engine Bay Cleaning ($50)</label></td>
-  <td><input type="number" id="addon-engine-qty" name="addon-engine-qty" value="0" min="0" oninput="updateEstimator()" /></td>
-      </tr>
-      <tr>
-  <td><input type="checkbox" id="addon-plastics-check" name="addon-plastics-check" onchange="updateEstimator()" /></td>
-        <td><label for="addon-plastics-check">Plastic Trim Shine ($25)</label></td>
-  <td><input type="number" id="addon-plastics-qty" name="addon-plastics-qty" value="0" min="0" oninput="updateEstimator()" /></td>
       </tr>
     </table>
     <!-- ===== END Add-Ons ===== -->
@@ -212,6 +156,7 @@
     </p>
   </footer>
 
+  <script src="services.js"></script>
   <script src="script.js"></script>
   <script src="nav.js"></script>
 </body>

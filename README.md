@@ -38,18 +38,17 @@ The site is hosted on **GitHub Pages** and served on the custom domain
 `brytonsautodetailing.com` (configured via the root `CNAME` file). Pushing to the
 deployment branch publishes the site.
 
-## Current status
+## Managing services and prices
 
-**Service model (live):** base services — **Interior**, **Exterior**, and **Combined**
-— priced across three vehicle classes (**Sedan**, **2 Row SUV / Crossover**, and
-**3 Row SUV / Van / Truck**) via `data-price` attributes in `index.html`, plus four
-add-ons (Seat Shampooing, Headlight Restoration, Engine Bay Cleaning, Plastic Trim
-Shine). *(Earlier notes describing a "Silver/Gold package" migration were inaccurate;
-that model is not in the code.)*
+Everything the client changes lives in **`services.js`**. The pricing section, the
+estimator rows, the emailed summary, and the hero "Details from $X" line are all
+generated from it. Edit only that file:
 
-**Phase 1A — Visual redesign (this change):** black-led design system in `style.css`,
-sticky header with text wordmark, homepage hero, restyled estimator (cosmetic only —
-markup/logic untouched), optimized WebP images, basic SEO metadata, and a shared
-`nav.js` for the mobile menu.
+- **Hide / reopen:** set `visible: false` / `true` on the service.
+- **Reorder:** move the service's entry up or down in the `SERVICES` array.
+- **Feature:** set `featured: true` to show a small "Featured" tag.
+- **Change a price:** edit `prices` (per vehicle size) or `price` (add-ons).
+- **Add a service:** copy an existing entry and give it a new unique `id`.
 
-See [roadmap.md](roadmap.md) for project state and planned next steps.
+The "What's Included in Every Full Detail" text in `index.html` is static and is
+hidden automatically when the `full` service is hidden.
